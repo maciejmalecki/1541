@@ -1,0 +1,1377 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>The Drive That Fought Its Own Computer</title>
+		<meta name="deck-origin" content="sibling:../research/c64-architecture/speech.md">
+
+		<!--
+			STYLESHEET ORDER IS LOAD-BEARING.
+
+			custom.css is LAST so it wins over the theme. PLAN-0001 Step 2.3 asserts this, and
+			the build's verify step checks it by reading the emitted HTML back — not by trusting
+			an exit code. The order mirrors ../pixelove2026/index.html:9-12, which is
+			reset, reveal, theme, custom.
+
+			Do not append a stylesheet after custom.css.
+		-->
+		<link rel="stylesheet" href="reset.css">
+		<link rel="stylesheet" href="reveal.css">
+		<link rel="stylesheet" href="theme.css">
+		<link rel="stylesheet" href="custom.css">
+
+		<!-- Code syntax highlighting. Before custom.css would be wrong; it is a plugin
+		     stylesheet and the example deck loads it after custom.css too
+		     (../pixelove2026/index.html:15). Kept here for that reason. -->
+		<link rel="stylesheet" href="monokai.css">
+	</head>
+
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<!--
+					The preprocessed deck. Phase 3 (one preprocessor file, per Step 3.0's
+					measurement) strips the marp frontmatter, moves each slide's _class
+					directive onto its section, and converts speaker-note comments into a
+					single Note: block that reveal turns into aside.notes.
+
+					Do not write comment delimiters inside a comment in this file — neither an
+					opener nor a closer. HTML comments do not nest: the parser ends the comment
+					at the first closing delimiter it meets, and everything after it becomes
+					live markup rendered over the deck. This happened twice on 2026-09-17, the
+					second time in a comment warning about the first.
+
+					No data-separator attribute: reveal's DEFAULT_SLIDE_SEPARATOR is already
+					'\r?\n---\r?\n', so the `---` breaks split natively. The Step 3.0 spike
+					confirmed this empirically against 61 real breaks.
+				-->
+				<section data-markdown>
+	<script type="text/template">
+# The Drive That Fought Its Own Computer
+
+## The Commodore 1541, and how not to build a system
+
+Note:
+SPEAKER NOTES — READ FIRST
+
+Target: 55 min at full length. Act 0.5 is the release valve (cut for ~50).
+Evidence map and claim cautions: see speech-syllabus.md, Appendices B and C.
+
+THREE THINGS TO SAY EXACTLY AS WRITTEN, because they are the difference between
+a talk that survives questions and one that does not:
+  1. The "all but three" dealer figure is one dealer's recollection, not a
+     failure rate. (Slide 32)
+  2. Never say "40 times" for the head-bump count — it is not verified from a
+     primary source. Say "repeatedly". (Slide 31)
+  3. Fastloader speeds are order-of-magnitude. Say "about forty times", not the
+     byte figure. (Slide 24)
+
+Through-line to repeat at each act break: a fix existed, and was not applied.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+# 🔊
+
+### *[play: a 1541 loading, then the bump]*
+
+Note:
+COLD OPEN — 3 min. Do not explain the sound. The chatter returns in Act 4 and
+the audience should recognise it, not have it recalled for them.
+
+Play ~10 seconds of a 1541 loading, then the head-bump chatter.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Two numbers
+
+# 170.75 KiB
+### what the disk holds
+
+# < 1 KB/s
+### how fast you can get it out
+
+Note:
+Let this sit. Two numbers, nothing else on the slide. The gap between them is
+the whole talk.
+
+Say: "That is 170 kilobytes of very good engineering, delivered through a straw."
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The question
+
+### How does a company build a drive **this good**
+
+### and connect it **this badly**?
+
+<br>
+
+**The answer is not "they were cheap."**
+
+Note:
+State the question and the promise. The promise matters — it tells the audience
+this is not the talk they have heard before.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+# Act 0.5
+## Where the floppy came from
+
+Note:
+=========================================================
+ACT 0.5 — WHERE THE FLOPPY CAME FROM — 5 min
+Cut this act first if running long. If it survives, slide 8 is what makes
+Act 3 land as inevitable rather than eccentric.
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 1967: a bootstrap problem
+
+> *"an inexpensive system for loading microcode
+> into the controller for the IBM 3330"*
+
+<br>
+
+The System/370 kept its microcode in **volatile memory**.
+
+Every power-up needed it **reloaded** — from something cheap and mailable.
+
+Note:
+Defeat the obvious assumption immediately: the floppy was not invented to store
+your data.
+
+IBM 1967. Shugart assigns David Noble. The problem is Initial Control Program
+Load — the System/370 was IBM's first family keeping microcode in VOLATILE
+memory, so it had to be reloaded on every power-up, from something cheap enough
+to post to a customer.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 1971: the 23FD "Minnow"
+
+![The IBM 23FD Minnow: an 8-inch read-only diskette holding 80 KiB](img/minnow-23fd.svg)
+
+```
+   ┌─────────────────────────┐
+   │  ████████████████████   │   8 inches
+   │  ██                 ██   │   READ ONLY
+   │  ██   ( ● )         ██   │   80 KiB
+   │  ██                 ██   │
+   │  ████████████████████   │   ≈ 3,000 punched cards
+   └─────────────────────────┘
+```
+
+### The floppy's first job was **booting a machine that forgot itself**
+
+Note:
+The Minnow. Note READ-ONLY. This is the slide where the audience realises the
+floppy's first job was booting a machine, not storing files.
+
+Read/write general-purpose use came a year later, and from Memorex — not IBM.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Why not just use tape?
+
+![Tape is sequential: reaching F means winding past A to E. Disk is random access: the head moves straight to the track](img/tape-vs-disk.svg)
+
+```
+  TAPE — sequential            DISK — random access
+  ════════════════             ═══════════════════
+
+  ▶───────────────▶                  ┌───────┐
+  wind to position                   │  ╱─╲  │
+                                     │ │ ● │ │  head moves
+  [A][B][C][D][E][F]                 │  ╲─╱  │  straight to
+   ↑                                 └───────┘  the track
+   must pass everything
+   to reach [F]
+```
+
+### Not a **better tape**. A **different data structure**.
+
+Note:
+THE KEY SLIDE OF THIS ACT. If you cut everything else in 0.5, keep this.
+
+The tempting answer is "floppies are tougher". True, irrelevant. The difference
+is categorical: tape is sequential, disk is random-access. Not a better tape —
+a different data structure.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## What random access buys you
+
+- a **directory** you can read without scanning the volume
+- a **block allocation map**
+- files updated **in place**
+
+<br>
+
+### → a filesystem worth writing
+
+### → **an operating system worth putting in a drive**
+
+Note:
+Spell out the consequence, because Act 3 depends on it. Everything the 1541
+story needs falls out of random access, and none of it out of robustness.
+
+Land: random access is what makes a filesystem worth writing — and therefore
+what makes an operating system worth putting in a drive.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## So why did everyone use tape?
+
+## **$400**
+### Shugart SA-400, 1976
+
+Drives *"typically cost more than the computer they were attached to."*
+
+<br>
+
+**Commodore's real achievement: making random access affordable.**
+*C64 + 1541, under $500 by 1983.*
+
+Now — forty minutes on what they hung it off.
+
+Note:
+So why did everyone use tape anyway? Price. Not ignorance.
+
+Shugart SA-400, late 1976, $400 list. In the early home era drives "typically
+cost more than the computer they were attached to."
+
+Land the set-up for the whole talk.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+# Act 1
+## The drive is a computer
+
+Note:
+=========================================================
+ACT 1 — THE DRIVE IS A COMPUTER — 9 min
+Establish competence. The audience must believe the drive is good, or Act 2
+has nothing to destroy.
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Inside a 1541
+
+![Inside a 1541: a 6502 at 1 MHz, 2 KiB SRAM, 16 KiB ROM with CBM DOS 2.6, and two 6522 VIA chips](img/inside-a-1541.svg)
+
+```
+  ┌──────────────────────────────────────────┐
+  │   6502 @ 1 MHz        2 KiB SRAM         │
+  │   ────────────        ─────────          │
+  │                                          │
+  │   16 KiB ROM          2 × 6522 VIA       │
+  │   (CBM DOS 2.6)       (VIA #1 = IEC bus) │
+  └──────────────────────────────────────────┘
+```
+
+### This is not a peripheral.
+
+### It has about as much CPU as the machine commanding it.
+
+Note:
+Open the box. Say the line: this is not a peripheral. It has about as much CPU
+as the machine commanding it.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The geometry problem
+
+```
+        outer track — long
+       ╭────────────────────╮
+      ╱  ╭──────────────╮    ╲
+     │  ╱  ╭────────╮    ╲    │
+     │ │  │  ╭──╮   │    │    │      track 1 is
+     │ │  │  │● │   │    │    │      46% LONGER
+     │ │  │  ╰──╯   │    │    │      than track 35
+     │  ╲  ╰────────╯    ╱    │
+      ╲  ╰──────────────╯    ╱
+       ╰────────────────────╯
+        same sectors on both = wasted disk
+```
+
+Note:
+Zoned recording. Start with the geometric problem, not the solution — the
+audience should feel the waste before seeing the fix.
+
+Track 1 is 46% longer than track 35. A constant-sectors format throws that away.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Four speed zones
+
+| Tracks | Sectors | µs/byte |
+|---|---|---|
+| 1–17 | **21** | 26 |
+| 18–24 | 19 | 28 |
+| 25–30 | 18 | 30 |
+| 31–35 | **17** | 32 |
+
+### Zone-bit recording — years before the industry standardised on it
+
+Note:
+The fix: vary the bit rate by radius. Four zones.
+
+Landing point — this is zone-bit recording, and it became a wider industry norm
+considerably later.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Why encode at all?
+
+Spindle motors vary between drives.
+
+A long run of identical bits **cannot be counted reliably**.
+
+<br>
+
+```
+  rule:  never more than 2 consecutive zeros
+         — within a group AND across groups
+
+  4 data bits  ──────►  5 bits on disk
+                        (16-entry table)
+```
+
+Note:
+GCR. Physical constraint FIRST. Spindle motors in different drives run at
+slightly different speeds, so a long run of identical bits cannot be counted
+reliably. More than two consecutive zeros is not permitted.
+
+Hence 4 bits -> 5 bits from a 16-entry table, built so the constraint survives
+ACROSS concatenated groups, not just within them.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The encoding creates its own punctuation
+
+Encoded data can **never** contain a long run of 1-bits.
+
+<br>
+
+```
+  ...0101101011  1111111111  0110101101...
+                 ▲▲▲▲▲▲▲▲▲▲
+                 ten 1-bits = impossible in data
+                            = SECTOR SYNC MARK
+```
+
+### The constraint doesn't just protect the data — it delimits it.
+
+Note:
+The elegant consequence. Dwell here — it is the prettiest idea in Act 1.
+
+Because encoded data can never contain a long run of 1-bits, a run of ten
+1-bits is unambiguous. That is the sector sync mark. The encoding creates its
+own punctuation.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+## Everything so far is competent.
+
+## Now watch it get thrown away.
+
+Note:
+Turn. One line. Everything so far is competent — now watch it get thrown away.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+# Act 2
+## The wire
+
+Note:
+=========================================================
+ACT 2 — THE WIRE — 14 min — THE SPINE OF THE TALK
+Do not cut. The audience arrives expecting "new machine, new chips, fixed" and
+three facts defeat that in sequence.
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## It was designed to be fast
+
+Tramiel: get off IEEE-488 —
+> *"make it a cable anyone can manufacture"*
+
+<br>
+
+Design intent, 1980:
+
+## ~4 µs/bit · **> 10 KB/s**
+### hardware shift register, in silicon
+
+### **The slow bus was not specified slow.**
+
+Note:
+Establish the fact the whole act rests on: the bus was designed FAST. It was
+not specified slow.
+
+Tramiel's order: get off the expensive single-sourced IEEE-488 cable. Belden
+was the single source and at one point ran out of stock.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The bug
+
+The 6522's shift register **drops a bit** when an external pulse
+coincides with an internal clock edge.
+
+<br>
+
+Butterfield, first-hand:
+
+> *"the silicon guys had application notes about
+> the problem, long since"*
+
+> *"the Commodore engineers, who only made the chip,
+> didn't know this. Until they got into final checkout
+> of the VIC-20"* — *"by which time the VIC-20 board
+> was in manufacture."*
+
+Note:
+The bug. 6522 shift register loses a bit when an external pulse coincides with
+an internal clock edge.
+
+The critical framing: this was NOT an engineering failure. It was a
+COMMUNICATION failure. The company already knew.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+## Not an engineering failure.
+
+## A **communication** failure.
+
+### The company knew. The team that depended on it did not.
+
+Note:
+Say this precisely. It is the most quotable framing in the talk.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The workaround
+
+```
+   designed:   4 µs/bit   ── hardware shift register
+                  │
+                  ▼
+   shipped:   20 µs/bit   ── CPU bit-banging, both ends
+```
+
+> a *"bit-catcher"* instead of a *"character-catcher"*
+
+**8× the CPU work · 5–6× slower than planned**
+
+Note:
+The workaround: full retreat to CPU bit-banging. 4 µs -> 20 µs per bit.
+
+Butterfield's phrase is the keeper: the machine became a "bit-catcher" instead
+of a "character-catcher". Eight times the CPU work.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The C64 has working shift registers
+
+### So it was fixed. Obviously.
+
+<br><br>
+
+### ...three reasons it wasn't.
+
+Note:
+ACT 2's CENTRAL TURN. The audience expects the C64 to fix this — new machine,
+new CIA chips with WORKING shift registers.
+
+Three facts defeat that. Deliver them in this order, as a sequence of closing
+doors.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 1. The drive kept the buggy chip
+
+```
+   C64  ──── 6526 CIA ✓ ────┐
+                            │  needs working silicon
+                            │  at BOTH ends
+   1541 ──── 6522 VIA ✗ ────┘
+```
+
+The 1541 is a lightly revised 1540.
+
+**Changing the drive cost money.**
+
+Note:
+Door 1. A hardware-shifted protocol needs working silicon at BOTH ends. The
+1541 is a lightly revised 1540 and kept the 6522.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 2. The fix pins go to the wrong connector
+
+```
+        6526 CIA
+        SP1/CNT1 ────────────►  USER PORT     (unused)
+        SP2/CNT2 ────────────►  USER PORT     (unused)
+
+                    ✗ not wired to ►  IEC CONNECTOR
+```
+
+Not a ROM patch away — it needed a **board rewire**.
+
+*The C128 did exactly that, on the idle SRQ line.*
+
+Note:
+Door 2. The best fact in the act. The fix pins physically go to the wrong
+connector — SP/CNT are routed to the USER PORT, not the IEC connector.
+
+Enabling the fast protocol was not a ROM patch. It needed a board rewire. The
+C128 did exactly that, using the previously idle SRQ line.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 3. The VIC-II sabotaged it
+
+```
+  CPU  ████████░░░░░░░░████████░░░░░░░░████████
+               ▲                ▲
+          badline DMA      every ~500 µs
+          halts CPU ~40 µs
+
+  ...which breaks 20 µs software bit timing.
+```
+
+Commodore's answer: relax the protocol **asymmetrically**.
+
+Device → computer: **~60 µs/bit**. Under 1 KB/s.
+
+Note:
+Door 3. The VIC-II. Badline DMA halts the CPU ~40 µs every ~500 µs, breaking
+the 20 µs software timing during receive.
+
+Rather than gate transfers on video timing, Commodore relaxed the protocol
+ASYMMETRICALLY. Remember this choice — Act 2.4 comes back to it.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+## The C64 didn't inherit a slow bus.
+
+## It inherited one — **and made it slower.**
+
+### The chip that sold the machine sabotaged its disk I/O.
+
+Note:
+The punchline of 2.3. Deliver it flat, no flourish.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Stock rate
+
+# 403 bytes/sec
+
+<br>
+
+### If the slowness comes from a chip bug and a video chip
+### stealing cycles...
+
+### ...how did **software** fix it without touching either?
+
+Note:
+=========================================================
+ACT 2.4 — THE TWIST — 4 min
+Set the trap first. 403 bytes/second. Then the question the audience should
+now be primed to ask.
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## What the shipped protocol left on the table
+
+**1. The second wire**
+
+```
+   KERNAL:      CLK ── clock        DATA ── data     1 bit/event
+   fastloader:  CLK ── data         DATA ── data     2 bits/event
+```
+
+<br>
+
+**2. Agreement instead of handshaking**
+
+Both CPUs run ~1 MHz → **cycle-match** instead of acknowledging every bit.
+
+> *"14 clock cycles delay for PAL and 15 for NTSC"*
+
+PAL vs NTSC = **one instruction** on the C64 side. Drive code: unchanged.
+
+Note:
+Four capabilities. Items 1 and 4 are cuttable; items 2 and 3 are not.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 3. Dodge the badline — don't accommodate it
+
+```
+  Commodore:   slow the ENTIRE PROTOCOL, permanently
+               ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+  Fastloader:  wait for the badline, transfer in the gap
+               ████░░░░████░░░░████░░░░████░░░░
+                   ▲       ▲       ▲
+                   periodic = schedulable
+```
+
+### Commodore paid a **permanent global cost**
+### to avoid a **locally avoidable** problem.
+
+Note:
+ITEM 3 IS THE SHARPEST POINT IN THE TALK. Never cut it.
+
+Commodore's answer to VIC-II interference was to slow the ENTIRE PROTOCOL,
+permanently. Fastloaders check the raster and transfer in the gap — because
+the interference is periodic and therefore schedulable.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 4. The drive's own DOS opens the door
+
+```
+   M-W   memory-write    ──►  upload code into drive RAM
+   M-E   memory-execute  ──►  jump to it
+```
+
+Uploaded **over the slow protocol**, then run on the drive's own 6502.
+
+Nothing rewired. Nothing patched in the host ROM.
+
+Note:
+Item 4. The drive's own DOS ships the subversion mechanism. Upload over the
+slow protocol, execute on the drive's CPU. Nothing rewired.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## On unmodified hardware
+
+| | speed | factor |
+|---|---|---|
+| Stock KERNAL | 403 B/s | 1× |
+| JiffyDOS | — | ~9× |
+| Vorpal | ~12,600 B/s | ~25× |
+| **Transwarp** | **~16,000 B/s** | **~40×** |
+
+### No cartridge. No hardware modification.
+
+Note:
+The numbers. SAY "about forty times" — the byte figures are enthusiast
+benchmarks that vary by file, drive and method.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The community beat the original design goal
+
+# ~16 KB/s
+### achieved in software, 1980s bedroom coders
+
+# > 10 KB/s
+### the hardware design target, 1980
+
+### **So the wire was never the limit.**
+
+Note:
+THE REVERSAL. Put the two figures side by side and let the audience do the
+arithmetic themselves.
+
+16 KB/s achieved in software, against 10 KB/s designed in hardware in 1980.
+The community beat the original design goal on the wiring Commodore shipped.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## What actually cost the 40×
+
+The bug removed the **hardware** path.
+
+The software replacement then conceded **far more than the bug required.**
+
+<br>
+
+### A protocol written to be safe against **unknown** hardware
+
+### ...on a bus where the only peripheral's clock rate
+
+### was known **exactly**.
+
+Note:
+The synthesis of Act 2. This is the sentence the act exists to earn.
+
+The bug removed the hardware path. The software replacement then conceded far
+more than the bug required — because it was written to be safe against
+peripherals whose timing it did not know, on a bus where the only peripheral's
+clock rate was known exactly.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Commodore's fix: 1986
+
+**C128 / 1571 — Fast Serial.** The 1980 design, finally shipped.
+
+<br>
+
+```
+  1980  design intent        > 10 KB/s
+  1981  VIC-20/1540          ~2 KB/s      (bug + workaround)
+  1982  C64/1541             < 1 KB/s     (worse)
+  1984  fastloaders          ~16 KB/s     (community)
+  1986  C128/1571            ~2.1 KB/s    (Commodore, at last)
+```
+
+### Five years. Three machine generations.
+
+Note:
+Close Act 2. Commodore's own fix, Fast Serial, arrived in 1986 with the
+C128/1571 — five years and three machine generations to ship the bus as
+designed, while third parties had already beaten it from userland.
+
+First statement of the through-line.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+# Act 3
+## The operating system, and its fossil
+
+Note:
+=========================================================
+ACT 3 — THE OPERATING SYSTEM AND ITS FOSSIL — 11 min
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The C64 has no disk operating system
+
+```
+   APPLE II / PC              COMMODORE
+   ═════════════              ═════════
+
+   ┌───────────┐              ┌───────────┐
+   │ COMPUTER  │              │ COMPUTER  │
+   │  ┌─────┐  │              │           │  "LOAD this"
+   │  │ DOS │  │              └─────┬─────┘
+   │  └─────┘  │                    │
+   └─────┬─────┘                    │ 2 wires
+         │ dumb                     │
+   ┌─────┴─────┐              ┌─────┴─────┐
+   │  MECHANISM│              │ COMPUTER  │
+   └───────────┘              │  ┌─────┐  │
+                              │  │ DOS │  │
+                              │  └─────┘  │
+                              └───────────┘
+```
+
+Note:
+The C64 has no disk operating system. DOS 2.6 lives in the drive and runs on
+the drive's CPU. The host cannot enumerate a directory except by LOADING it as
+though it were a program.
+
+This is the inverse of Apple DOS 3.3 and PC DOS.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Talking to a peer
+
+```
+   channels 0–14   ──►  file data (each bound to a filename)
+   channel  15     ──►  commands in, status out
+```
+
+<br>
+
+```basic
+OPEN 15,8,15
+PRINT#15,"S0:OLDFILE"      : REM scratch
+INPUT#15,A$                : REM  "01, FILES SCRATCHED,01,00"
+```
+
+### Errors are a **conversation**: `23,READ ERROR,18,00`
+
+Note:
+The channel model. The IEC secondary address IS the channel number — the
+abstraction is bus-level, not software-level.
+
+Errors come back as conversation.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Credit where it is due
+
+The drive interprets **high-level commands**, not block requests.
+
+- several computers can share one drive, no host coordination
+- the drive outlives its host's software
+- the filesystem is not a library you must port
+
+### This is a genuinely distributed design. It aged well.
+
+Note:
+BE FAIR HERE. This aged well in one respect: several computers can share a
+drive with no host coordination, and a drive can outlive its host's software.
+Commodore got something real.
+
+Saying this makes the criticism land harder, not softer.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## And yet
+
+To delete a file:
+
+```basic
+OPEN 15,8,15,"S0:OLDFILE":CLOSE 15
+```
+
+**BASIC 2.0 has no disk commands. At all.**
+
+<br>
+
+The wedges and fastload cartridges everyone remembers
+were patching a hole in **BASIC** — not in the drive.
+
+*BASIC 3.0 had the commands. The C64 shipped the older one.*
+
+Note:
+And yet. BASIC 2.0 has no disk commands at all. To delete a file you open a
+communications channel to a peer device and send it a string.
+
+The wedges and fastload cartridges everyone remembers were patching a hole in
+BASIC — not in the drive. BASIC 3.0 had the commands. The C64 shipped the
+older one.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## A question for the room
+
+# LOAD"0:GAME",8
+
+<br>
+
+### What is the `0:` for?
+
+Note:
+THE FOSSIL — 4 min. Ask the room first. Most will say "nothing" or "habit".
+Let two or three people answer before revealing.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## It is a drive number
+
+```
+   PET-era dual drive (4040, 8050)      1541
+   ════════════════════════════════     ════
+
+   ┌─────────┬─────────┐                ┌─────────┐
+   │ drive 0 │ drive 1 │                │ drive 0 │
+   │  LEFT   │  RIGHT  │                │         │
+   └─────────┴─────────┘                └─────────┘
+       real      real                       only
+                                          possible
+                                            value
+```
+
+Note:
+It is a drive number. On a 1541 it can only ever be zero.
+
+CBM DOS was written for the PET-era DUAL drives, where drive 0 was the left
+mechanism and drive 1 the right. The 1541's DOS is derivative of that code.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+## Every `0:` ever typed on a C64
+
+## addresses the **left-hand mechanism**
+
+## of a dual drive that owner never had.
+
+Note:
+Land it hard. This is the emotional centre of Act 3.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The C64 has two fossils
+
+| | fossilised in | |
+|---|---|---|
+| **Ultimax mode** | silicon | a console's memory map, in every PLA |
+| **`0:`** | **the user interface** | a dual drive's addressing, typed by hand |
+
+<br>
+
+### One was baked in at manufacture.
+
+### The other was typed by hand, millions of times a day, for a decade.
+
+Note:
+Tie back to Ultimax. The subject already frames Ultimax as "a foreign machine's
+memory map fossilised in every C64". This is the same phenomenon — except
+fossilised in the USER INTERFACE, typed by hand, millions of times a day, for a
+decade.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The fossil is not decorative
+
+`SAVE"@0:NAME"` — save-with-replace — **corrupts data.**
+
+Slaymaker, *The Transactor*, September 1986:
+
+> on directory access the drive *"tries to initialize drive 1
+> if no drive was specified"* — allocating a buffer to
+> **"the phantom drive 1 (not present in a 1541 drive)"**
+
+Note:
+The fossil bites. SAVE"@..." corrupts data, and Slaymaker's 1986 disassembly
+shows why in the DOS's own terms.
+
+"Phantom drive 1 (not present in a 1541 drive)" is HIS phrase — primary source,
+read in full.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## How a ghost corrupts your disk
+
+```
+  buffers:  [0] [1] [2] [3] [4]
+                      ▲
+                      └── allocated to a drive that does not exist
+                          ...and unstealable (it "errored")
+
+  SAVE@ needs all 5.  Only 4 available.
+        │
+        └──►  steals the BAM instead
+              │
+              └──►  only 2 track-images fit
+                    │
+                    └──►  "may be updated correctly, be left
+                           unchanged, or be fully allocated"
+```
+
+Note:
+Walk the mechanism. Five buffers; save-with-replace needs all five; the phantom
+holds one hostage because buffers with drive errors cannot be stolen; so DOS
+steals the BAM instead; the two-track BAM-image limit does the rest.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+## A vestigial structure that corrupts real data
+
+## is not a leftover.
+
+## It is an **unpaid migration cost**.
+
+Note:
+Land Act 3. Then the accuracy note — say it out loud, it costs five seconds.
+
+The folk workaround "always type 0: when saving" is INSUFFICIENT. Slaymaker
+tested it: any directory access without a drive number can arm the bug.
+
+SAY THIS: "And the folklore workaround — always type 0: when you save — doesn't
+work. Slaymaker tested it. Any directory access without a drive number arms it."
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+# Act 4
+## The machine that broke itself
+
+Note:
+=========================================================
+ACT 4 — THE MACHINE THAT BROKE ITSELF — 7 min
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 🔊 *[play the chatter again]*
+
+The drive has **no track-zero sensor**.
+
+After an error it cannot know where the head is.
+
+```
+   recalibration:  step out ──► step out ──► step out ──► ...
+                                                    ▲
+                              ┌─────────────────────┘
+                              │  mechanical stop
+                              │  (and keep going)
+                         ═════╧═════
+```
+
+### That sound is the head being rammed out of alignment.
+
+Note:
+Return the sound from the cold open. Play it again, briefly.
+
+The drive has no track-zero sensor, so after an error it cannot know where the
+head is. It recalibrates the only way it can: drive the head outward until it
+hits a mechanical stop — and keep going.
+
+SAY "repeatedly" — NOT "40 times". That count is not verified from a primary.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The damage was real
+
+*Compute!'s Gazette*, December 1983 — one multi-state service dealer:
+
+> repaired *"several hundred"* drives — the head-alignment part
+> *"was to blame in **all but three** cases"*
+
+<br>
+
+Independent corroboration, different population:
+
+### **four of the magazine's own seven drives** failed the same way
+
+Note:
+The damage was real. Compute's Gazette, December 1983 — Robert Lock's editorial,
+read at source.
+
+THEN SAY THE CAVEAT OUT LOUD. It costs ten seconds and is the difference between
+a talk that can be checked and one that cannot.
+
+SAY THIS OUT LOUD: "That's one dealer's recollection relayed by an editor. No
+methodology, no denominator. It's a strong signal — it is not a measured failure
+rate."
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## The obvious moral is wrong
+
+### "They saved money on a sensor."
+
+<br>
+
+## No.
+
+### The 1541C **shipped with the sensor fitted**
+### — and Commodore **disabled it at the factory.**
+
+*There is a jumper, J3, to turn it back on.*
+
+Note:
+THE REVERSAL — the best twist in the talk. The obvious moral is "they saved
+money on a sensor". That is WRONG.
+
+The 1541C shipped the photo-sensor FITTED — and Commodore disabled it at the
+factory. There is a jumper, J3, to turn it back on.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Because the banging was doing a job
+
+> a *"feature… installed by Commodore to eliminate a common
+> problem with all 1541 drives… the drive getting **'lost'**
+> past the directory track"*
+
+> otherwise the drive *"might look defective to the user since
+> turning it off and back on again does not restore normal
+> operation"*
+
+Note:
+Why? Because the head-banging was DOING A JOB. Service documentation records it
+as a deliberate feature.
+
+Without it, a lost head produced a drive that could not be recovered by power-
+cycling — so it looked broken to the user.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## A trade, not an oversight
+
+```
+   ACCEPT:   cumulative alignment damage
+   TO GET:   a drive that always recovers to a known state
+```
+
+<br>
+
+### And on the 1541C the pressure was **compatibility** —
+
+### not cost.
+
+Note:
+So it is a trade, not an oversight. And note what the pressure was on the 1541C:
+COMPATIBILITY, not cost. That connects to the installed-base thread rather than
+the cost-cutting one.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+# Act 5
+## The pattern
+
+Note:
+=========================================================
+ACT 5 — THE PATTERN — 5 min
+Build the table ONE ROW AT A TIME. Each row should feel like recognition, not
+new information — the audience has met all four defects already.
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Four defects. One habit.
+
+| Defect | Fixed in | Shipped units |
+|---|---|---|
+| Serial bus | C128 / 1571 Fast Serial | **never** |
+| Track-zero sensor | 1571 photo-interrupter | **never** |
+| `SAVE@` corruption | 1571 Revision 4 ROMs | *"not currently under consideration"* |
+| Head-alignment part | fixed on the production line | **left as they were** |
+
+### Silicon · mechanism · firmware · manufacturing
+
+Note:
+Reveal row by row. Pause after the third.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## And in every case — they knew
+
+- the 6522 application notes **existed inside the company**
+- the sensor was **fitted, then disabled**
+- Commodore *"is well aware of Mr. Slaymaker's findings"*
+- *"aware of the problem and trying to fix it at the manufacturing level"*
+
+<br>
+
+### The fix always went into the **next** machine.
+
+Note:
+And in every case, Commodore KNEW. This is the slide that converts four
+anecdotes into a thesis.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## What it cost Commodore
+
+*Compute!'s Gazette*, December 1983:
+
+> *"we were able to locate only two units in the
+> entire continental United States"*
+
+> Commodore was *"deferring hundreds of thousands
+> of dollars in potential sales"*
+
+<br>
+
+### Cost discipline that produces a product you cannot ship
+
+### **is not cost discipline.**
+
+Note:
+What it actually cost. Not only users — Commodore itself. Lock's editorial is
+about a NATIONWIDE SHORTAGE.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+# 170.75 KiB
+# < 1 KB/s
+
+### Commodore could build the parts.
+
+### What it could not do was make them a **system**.
+
+Note:
+=========================================================
+CLOSE — 1 min
+=========================================================
+Return to the two numbers. Deliver the thesis plainly.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## One last thing
+
+The drive was a computer. **The community treated it as one.**
+
+- fastloaders that beat the factory design goal
+- copy protection running on the drive's own CPU
+- demos using the 1541 as a **maths co-processor**
+
+<br>
+
+### The openness Commodore never designed —
+
+### arrived at by accident.
+
+### It is why we are still talking about it.
+
+Note:
+The optional final beat. Warmer than the thesis, and true.
+
+The drive was a computer, and the community treated it as one: fastloaders,
+copy protection, demos using the 1541 as a maths co-processor.
+
+The openness Commodore never designed — arrived at by accident — is the reason
+we are still talking about it.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+# Questions
+
+Note:
+Q&A. Likely questions and where the answers live:
+
+- "Why not just use the parallel port?" — DolphinDOS did; needs a cable, ~23x.
+  Transwarp got ~40x with no hardware at all (Act 2.4).
+- "Was the 1541 slower than competitors?" — yes; Apple II Disk II was ~15 KB/s.
+  Worth noting the Disk II was Wozniak's design and famously minimal hardware.
+- "Did Commodore ever fix the C64 itself?" — no. Every fix went to a successor.
+  That is Act 5.
+- "How fast was the 1571?" — Fast Serial ~2.1 KB/s standard, faster in Burst.
+  Still below what fastloaders achieved on a 1541.
+- Anything on the C128/Apple material — the citation chains there run through
+  secondary sources (obs-0017). Say so rather than guessing.
+	</script>
+</section>
+			</div>
+		</div>
+
+		<script src="reveal.js"></script>
+		<script src="markdown.js"></script>
+		<script src="highlight.js"></script>
+		<script src="notes.js"></script>
+		<script>
+			// Config carried over from ../pixelove2026/index.html, which is the quality
+			// baseline this pipeline has to match.
+			Reveal.initialize({
+				hash: true,
+				width: 1200,
+				height: 700,
+				slideNumber: 'c/t',
+				autoPlayMedia: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

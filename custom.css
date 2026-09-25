@@ -1,0 +1,165 @@
+/*
+ * The house class vocabulary.
+ *
+ * Adopted from ../pixelove2026/css/custom.css and ../retrosfera7/css/custom.css, which are
+ * byte-identical (1126 bytes each, verified with cmp 2026-09-16) — a shared vocabulary
+ * duplicated by copy rather than shared. This is the one tracked copy.
+ *
+ * Loaded LAST by src/template.html, after the theme, so these rules win. That order is the
+ * point: see PLAN-0001 Step 2.3.
+ */
+
+.reveal section .pink {
+    color: #ff00ff;
+}
+.reveal section .cyan {
+    color: #00ffff;
+}
+.reveal section .left-align {
+    text-align: left;
+}
+.reveal section .no-ticks li {
+    list-style-type: none;
+}
+.reveal section .gap1 {
+    gap: 1em;
+}
+.reveal section .toright {
+    text-align: right;
+}
+.reveal section .toleft {
+    text-align: left;
+}
+.reveal section .smaller {
+    font-size: smaller;
+}
+.reveal section code {
+    color: blueviolet;
+}
+.reveal section .subtitle {
+    font-size: 2rem;
+}
+.reveal section .img-reduce {
+    height: 500px;
+}
+.reveal section .up {
+    text-transform: uppercase;
+}
+.reveal section .nt {
+    list-style-type: none;
+}
+.reveal section .bg {
+    background-color: rgba(0,0,0,0.5);
+}
+.reveal section .wide {
+    padding: 1em;
+}
+/* ---------------------------------------------------------------------------
+ * Slide layouts — PLAN-0008 Step 3.1, issue #6.
+ *
+ * WHY THESE LIVE HERE rather than in a sixth stylesheet. src/template.html says, in the file
+ * itself, "Do not append a stylesheet after custom.css", and build.js asserts BOTH halves of that
+ * order by reading the emitted HTML back: custom.css must load after reveal.css and theme.css, and
+ * nothing may follow it except the highlight plugin. A new <link> would mean editing the template
+ * and both invariants. These rules want to win over the theme for the same reason the rest of this
+ * file does, so this is where they belong.
+ *
+ * Everything above is a DESCENDANT helper (.reveal section .pink) styling spans inside a slide.
+ * These are the first SECTION-LEVEL rules in this file — they style the slide itself.
+ * ------------------------------------------------------------------------ */
+
+/* `lead` — an act-break title card. The only layout with real callers today: c64-1541's 8
+ * `_class: lead` slides, which Step 3.2 migrates to a `layouts.yml` assignment.
+ *
+ * Measured before writing this: `.lead` was styled NOWHERE — not in this file, not in the
+ * compiled theme, not in reveal's own themes, and not in either sibling deck. So those 8 slides
+ * have been carrying an inert attribute, and this is the first rule that makes it mean anything.
+ * Kept deliberately restrained for that reason: it changes how existing slides look, and a large
+ * change would be a redesign smuggled in as a feature. */
+.reveal section.lead {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+.reveal section.lead h1,
+.reveal section.lead h2 {
+    margin: 0.2em 0;
+}
+.reveal section.lead h3 {
+    margin-top: 1em;
+    font-size: 1.6rem;
+    font-weight: normal;
+    opacity: 0.85;
+}
+
+/* The four WRAPPER layouts. Written and validated in Phase 1, but not reachable yet: filling
+ * their slots needs a convention for deriving named parts from a slide body, and the real decks
+ * supply no usable divider (a heading boundary collides with the act-break title cards above).
+ * Styled anyway, so that when the convention lands the layouts are not also unstyled — and so a
+ * reader can see what each one is for. */
+.reveal section .layout-two-column {
+    display: flex;
+    gap: 1.5em;
+    align-items: flex-start;
+    text-align: left;
+}
+.reveal section .layout-two-column > .col {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.reveal section .layout-text-image {
+    display: flex;
+    gap: 1.5em;
+    align-items: center;
+    text-align: left;
+}
+.reveal section .layout-text-image > .text {
+    flex: 1 1 55%;
+    min-width: 0;
+}
+.reveal section .layout-text-image > .image {
+    flex: 1 1 45%;
+    min-width: 0;
+}
+.reveal section .layout-text-image > .image img {
+    max-width: 100%;
+    height: auto;
+}
+
+.reveal section .layout-full-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.reveal section .layout-overlay {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.reveal section .layout-overlay > .scrim {
+    background-color: rgba(0, 0, 0, 0.62);
+    padding: 1.2em 1.6em;
+    max-width: 80%;
+    text-align: center;
+}
+
+.logo {
+    position: fixed; /* Makes it stay in place on all slides */
+    top: 0.5em; /* Adjust the position as needed */
+    right: 0.5em; /* Adjust the position as needed */
+    width: 13em; /* Adjust the size as needed */
+    height: auto;
+    z-index: 1000; /* Ensures logo is above other elements */
+  }

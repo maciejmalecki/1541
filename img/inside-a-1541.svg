@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 300" width="860" height="300" role="img" aria-labelledby="t d">
+  <title id="t">Inside a 1541</title>
+  <desc id="d">The 1541 disk drive contains a 6502 at 1 MHz, 2 KiB of SRAM, 16 KiB of ROM holding CBM DOS 2.6, and two 6522 VIA chips, one of which drives the IEC bus.</desc>
+  <!--
+    PLAN-0004 Phase 1, hand-authored. Replaces the fenced ASCII block at
+    decks/c64-1541/slides.md:236.
+
+    THEME TOKENS, resolved at generation time from src/theme/slides.scss:25-43
+    (PLAN-0004 Req. 2 — an external asset inherits no CSS, so it records what
+    it used):
+      background #111 · foreground #fff · accent #e7ad52
+      heading Montserrat · body 'Open Sans'
+    The original ASCII used a rule of ──── under each label; that is a <line>
+    here rather than a glyph, so it scales with the figure.
+  -->
+  <rect width="860" height="300" fill="#111"/>
+
+  <rect x="30" y="30" width="800" height="240" rx="8" fill="none" stroke="#fff" stroke-width="3"/>
+
+  <g font-family="'Open Sans', sans-serif" fill="#fff">
+    <!-- left column -->
+    <text id="cpu" x="80" y="100" font-size="30" font-weight="600">6502 @ 1 MHz</text>
+    <line x1="80" y1="112" x2="300" y2="112" stroke="#e7ad52" stroke-width="2"/>
+
+    <text id="rom" x="80" y="196" font-size="30" font-weight="600">16 KiB ROM</text>
+    <line x1="80" y1="208" x2="300" y2="208" stroke="#e7ad52" stroke-width="2"/>
+    <text id="rom-detail" x="80" y="236" font-size="22" opacity="0.85">(CBM DOS 2.6)</text>
+
+    <!-- right column -->
+    <text id="sram" x="470" y="100" font-size="30" font-weight="600">2 KiB SRAM</text>
+    <line x1="470" y1="112" x2="690" y2="112" stroke="#e7ad52" stroke-width="2"/>
+
+    <text id="via" x="470" y="196" font-size="30" font-weight="600">2 &#215; 6522 VIA</text>
+    <line x1="470" y1="208" x2="690" y2="208" stroke="#e7ad52" stroke-width="2"/>
+    <text id="via-detail" x="470" y="236" font-size="22" opacity="0.85">(VIA #1 = IEC bus)</text>
+  </g>
+</svg>
