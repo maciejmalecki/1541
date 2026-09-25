@@ -47,7 +47,8 @@
 					'\r?\n---\r?\n', so the `---` breaks split natively. The Step 3.0 spike
 					confirmed this empirically against 61 real breaks.
 				-->
-				<section data-markdown>
+				<section>
+<section data-markdown>
 	<script type="text/template">
 # The Drive That Fought Its Own Computer
 
@@ -56,17 +57,27 @@
 Note:
 SPEAKER NOTES — READ FIRST
 
-Target: 55 min at full length. Act 0.5 is the release valve (cut for ~50).
-Evidence map and claim cautions: see speech-syllabus.md, Appendices B and C.
+Target: ~45 min. Both cut sets are applied — Appendix A items 1-4 and the
+Act 2 cuts C1/C3/C4 from speech-cutdown-analysis.md. This is the 45-minute
+deck, not the 55-minute one; the full-length material is in git.
+
+Four places now carry a line to SAY over a surviving slide, where the slide
+that used to make the point was cut. They are marked in the notes: the zone
+detail (Act 1), the pricing set-up (Act 0.5), the distributed-design fairness
+beat (Act 3), and the corroborating drive numbers (Act 4).
+
+Evidence map and claim cautions: speech-syllabus.md, Appendices B and C.
 
 THREE THINGS TO SAY EXACTLY AS WRITTEN, because they are the difference between
-a talk that survives questions and one that does not:
+a talk that survives questions and one that does not. Located by SLIDE TITLE,
+not number — the numbers drifted once already and will again:
   1. The "all but three" dealer figure is one dealer's recollection, not a
-     failure rate. (Slide 32)
+     failure rate. -> slide "The damage was real"
   2. Never say "40 times" for the head-bump count — it is not verified from a
-     primary source. Say "repeatedly". (Slide 31)
+     primary source. Say "repeatedly". -> slide "[play the chatter again]"
   3. Fastloader speeds are order-of-magnitude. Say "about forty times", not the
-     byte figure. (Slide 24)
+     byte figure. -> slide "The community beat the original design goal"
+     (this caveat moved here when the speed table was cut)
 
 Through-line to repeat at each act break: a fix existed, and was not applied.
 	</script>
@@ -121,7 +132,9 @@ State the question and the promise. The promise matters — it tells the audienc
 this is not the talk they have heard before.
 	</script>
 </section>
+</section>
 
+<section>
 <section data-markdown>
 	<script type="text/template">
 # Act 0.5
@@ -129,60 +142,15 @@ this is not the talk they have heard before.
 
 Note:
 =========================================================
-ACT 0.5 — WHERE THE FLOPPY CAME FROM — 5 min
-Cut this act first if running long. If it survives, slide 8 is what makes
-Act 3 land as inevitable rather than eccentric.
+ACT 0.5 — WHERE THE FLOPPY CAME FROM — 2 min
+TRIMMED to §0.5.2 only (Appendix A item 1). The IBM origin slides and the
+Shugart pricing slide are cut; what remains is the sequential-vs-random
+distinction, which is what makes Act 3 land as inevitable rather than
+eccentric. That is the whole reason this act survived at all.
+
+If you need the origin story for a longer variant, it is in git and in
+obs-0047.
 =========================================================
-	</script>
-</section>
-
-<section data-markdown>
-	<script type="text/template">
-## 1967: a bootstrap problem
-
-> *"an inexpensive system for loading microcode
-> into the controller for the IBM 3330"*
-
-<br>
-
-The System/370 kept its microcode in **volatile memory**.
-
-Every power-up needed it **reloaded** — from something cheap and mailable.
-
-Note:
-Defeat the obvious assumption immediately: the floppy was not invented to store
-your data.
-
-IBM 1967. Shugart assigns David Noble. The problem is Initial Control Program
-Load — the System/370 was IBM's first family keeping microcode in VOLATILE
-memory, so it had to be reloaded on every power-up, from something cheap enough
-to post to a customer.
-	</script>
-</section>
-
-<section data-markdown>
-	<script type="text/template">
-## 1971: the 23FD "Minnow"
-
-![The IBM 23FD Minnow: an 8-inch read-only diskette holding 80 KiB](img/minnow-23fd.svg)
-
-```
-   ┌─────────────────────────┐
-   │  ████████████████████   │   8 inches
-   │  ██                 ██   │   READ ONLY
-   │  ██   ( ● )         ██   │   80 KiB
-   │  ██                 ██   │
-   │  ████████████████████   │   ≈ 3,000 punched cards
-   └─────────────────────────┘
-```
-
-### The floppy's first job was **booting a machine that forgot itself**
-
-Note:
-The Minnow. Note READ-ONLY. This is the slide where the audience realises the
-floppy's first job was booting a machine, not storing files.
-
-Read/write general-purpose use came a year later, and from Memorex — not IBM.
 	</script>
 </section>
 
@@ -191,19 +159,6 @@ Read/write general-purpose use came a year later, and from Memorex — not IBM.
 ## Why not just use tape?
 
 ![Tape is sequential: reaching F means winding past A to E. Disk is random access: the head moves straight to the track](img/tape-vs-disk.svg)
-
-```
-  TAPE — sequential            DISK — random access
-  ════════════════             ═══════════════════
-
-  ▶───────────────▶                  ┌───────┐
-  wind to position                   │  ╱─╲  │
-                                     │ │ ● │ │  head moves
-  [A][B][C][D][E][F]                 │  ╲─╱  │  straight to
-   ↑                                 └───────┘  the track
-   must pass everything
-   to reach [F]
-```
 
 ### Not a **better tape**. A **different data structure**.
 
@@ -236,35 +191,16 @@ story needs falls out of random access, and none of it out of robustness.
 
 Land: random access is what makes a filesystem worth writing — and therefore
 what makes an operating system worth putting in a drive.
+
+The pricing slide that used to follow is cut (Appendix A item 1). Keep its
+one-line set-up verbally if it helps the transition: drives cost more than the
+computers they attached to, and Commodore's real achievement was making random
+access affordable. Then move straight into Act 1.
 	</script>
 </section>
-
-<section data-markdown>
-	<script type="text/template">
-## So why did everyone use tape?
-
-## **$400**
-### Shugart SA-400, 1976
-
-Drives *"typically cost more than the computer they were attached to."*
-
-<br>
-
-**Commodore's real achievement: making random access affordable.**
-*C64 + 1541, under $500 by 1983.*
-
-Now — forty minutes on what they hung it off.
-
-Note:
-So why did everyone use tape anyway? Price. Not ignorance.
-
-Shugart SA-400, late 1976, $400 list. In the early home era drives "typically
-cost more than the computer they were attached to."
-
-Land the set-up for the whole talk.
-	</script>
 </section>
 
+<section>
 <section data-markdown>
 	<script type="text/template">
 # Act 1
@@ -285,16 +221,6 @@ has nothing to destroy.
 
 ![Inside a 1541: a 6502 at 1 MHz, 2 KiB SRAM, 16 KiB ROM with CBM DOS 2.6, and two 6522 VIA chips](img/inside-a-1541.svg)
 
-```
-  ┌──────────────────────────────────────────┐
-  │   6502 @ 1 MHz        2 KiB SRAM         │
-  │   ────────────        ─────────          │
-  │                                          │
-  │   16 KiB ROM          2 × 6522 VIA       │
-  │   (CBM DOS 2.6)       (VIA #1 = IEC bus) │
-  └──────────────────────────────────────────┘
-```
-
 ### This is not a peripheral.
 
 ### It has about as much CPU as the machine commanding it.
@@ -309,46 +235,20 @@ as the machine commanding it.
 	<script type="text/template">
 ## The geometry problem
 
-```
-        outer track — long
-       ╭────────────────────╮
-      ╱  ╭──────────────╮    ╲
-     │  ╱  ╭────────╮    ╲    │
-     │ │  │  ╭──╮   │    │    │      track 1 is
-     │ │  │  │● │   │    │    │      46% LONGER
-     │ │  │  ╰──╯   │    │    │      than track 35
-     │  ╲  ╰────────╯    ╱    │
-      ╲  ╰──────────────╯    ╱
-       ╰────────────────────╯
-        same sectors on both = wasted disk
-```
+![A disk platter drawn as concentric tracks: the outermost track is 46% longer than the innermost, yet a constant-sectors format stores the same on both, wasting the outer disk](img/track-geometry.svg)
 
 Note:
 Zoned recording. Start with the geometric problem, not the solution — the
 audience should feel the waste before seeing the fix.
 
 Track 1 is 46% longer than track 35. A constant-sectors format throws that away.
-	</script>
-</section>
 
-<section data-markdown>
-	<script type="text/template">
-## Four speed zones
+The zone table is cut (Appendix A item 2). The 46% fact on this slide is what
+carries the point; the table was detail.
 
-| Tracks | Sectors | µs/byte |
-|---|---|---|
-| 1–17 | **21** | 26 |
-| 18–24 | 19 | 28 |
-| 25–30 | 18 | 30 |
-| 31–35 | **17** | 32 |
-
-### Zone-bit recording — years before the industry standardised on it
-
-Note:
-The fix: vary the bit rate by radius. Four zones.
-
-Landing point — this is zone-bit recording, and it became a wider industry norm
-considerably later.
+SAY, over this slide: "So the 1541 varies the bit rate by radius — four zones,
+21 sectors on the outer tracks down to 17 on the inner. That is zone-bit
+recording, years before the industry standardised on it."
 	</script>
 </section>
 
@@ -362,13 +262,7 @@ A long run of identical bits **cannot be counted reliably**.
 
 <br>
 
-```
-  rule:  never more than 2 consecutive zeros
-         — within a group AND across groups
-
-  4 data bits  ──────►  5 bits on disk
-                        (16-entry table)
-```
+![Flow diagram: a 16-entry table encodes every 4 data bits as 5 bits on disk, under the rule of never more than two consecutive zeros, within a group and across groups.](img/gcr-encoding.svg)
 
 Note:
 GCR. Physical constraint FIRST. Spindle motors in different drives run at
@@ -388,12 +282,7 @@ Encoded data can **never** contain a long run of 1-bits.
 
 <br>
 
-```
-  ...0101101011  1111111111  0110101101...
-                 ▲▲▲▲▲▲▲▲▲▲
-                 ten 1-bits = impossible in data
-                            = SECTOR SYNC MARK
-```
+![A stream of encoded bits in which a run of ten 1-bits stands out in accent: impossible in encoded data, so it serves as the sector sync mark](img/sync-mark.svg)
 
 ### The constraint doesn't just protect the data — it delimits it.
 
@@ -416,7 +305,9 @@ Note:
 Turn. One line. Everything so far is competent — now watch it get thrown away.
 	</script>
 </section>
+</section>
 
+<section>
 <section data-markdown>
 	<script type="text/template">
 # Act 2
@@ -470,9 +361,7 @@ Butterfield, first-hand:
 > *"the silicon guys had application notes about
 > the problem, long since"*
 
-> *"the Commodore engineers, who only made the chip,
-> didn't know this. Until they got into final checkout
-> of the VIC-20"* — *"by which time the VIC-20 board
+> *"...by which time the VIC-20 board
 > was in manufacture."*
 
 Note:
@@ -501,12 +390,7 @@ Say this precisely. It is the most quotable framing in the talk.
 	<script type="text/template">
 ## The workaround
 
-```
-   designed:   4 µs/bit   ── hardware shift register
-                  │
-                  ▼
-   shipped:   20 µs/bit   ── CPU bit-banging, both ends
-```
+![Two bars on one scale contrast the designed 4 µs per bit of the hardware shift register with the shipped 20 µs per bit of CPU bit-banging at both ends.](img/bit-banging.svg)
 
 > a *"bit-catcher"* instead of a *"character-catcher"*
 
@@ -543,12 +427,7 @@ doors.
 	<script type="text/template">
 ## 1. The drive kept the buggy chip
 
-```
-   C64  ──── 6526 CIA ✓ ────┐
-                            │  needs working silicon
-                            │  at BOTH ends
-   1541 ──── 6522 VIA ✗ ────┘
-```
+![The C64 has the fixed 6526 CIA but the 1541 kept the buggy 6522 VIA, and the bracket joining them notes the protocol needs working silicon at both ends.](img/both-ends.svg)
 
 The 1541 is a lightly revised 1540.
 
@@ -564,13 +443,7 @@ Door 1. A hardware-shifted protocol needs working silicon at BOTH ends. The
 	<script type="text/template">
 ## 2. The fix pins go to the wrong connector
 
-```
-        6526 CIA
-        SP1/CNT1 ────────────►  USER PORT     (unused)
-        SP2/CNT2 ────────────►  USER PORT     (unused)
-
-                    ✗ not wired to ►  IEC CONNECTOR
-```
+![The 6526 CIA's SP and CNT pins run to the unused user port; the wire toward the IEC connector is broken and crossed out because it was never made.](img/pins-wrong-connector.svg)
 
 Not a ROM patch away — it needed a **board rewire**.
 
@@ -589,14 +462,7 @@ C128 did exactly that, using the previously idle SRQ line.
 	<script type="text/template">
 ## 3. The VIC-II sabotaged it
 
-```
-  CPU  ████████░░░░░░░░████████░░░░░░░░████████
-               ▲                ▲
-          badline DMA      every ~500 µs
-          halts CPU ~40 µs
-
-  ...which breaks 20 µs software bit timing.
-```
+![A CPU timeline in which badline DMA halts the CPU for about 40 microseconds every roughly 500, breaking the 20 microsecond software bit timing.](img/badline-timeline.svg)
 
 Commodore's answer: relax the protocol **asymmetrically**.
 
@@ -650,16 +516,7 @@ now be primed to ask.
 	<script type="text/template">
 ## What the shipped protocol left on the table
 
-**1. The second wire**
-
-```
-   KERNAL:      CLK ── clock        DATA ── data     1 bit/event
-   fastloader:  CLK ── data         DATA ── data     2 bits/event
-```
-
-<br>
-
-**2. Agreement instead of handshaking**
+**Agreement instead of handshaking**
 
 Both CPUs run ~1 MHz → **cycle-match** instead of acknowledging every bit.
 
@@ -667,72 +524,42 @@ Both CPUs run ~1 MHz → **cycle-match** instead of acknowledging every bit.
 
 PAL vs NTSC = **one instruction** on the C64 side. Drive code: unchanged.
 
+<br>
+
+*Getting the code in: the drive's own DOS uploads it over the slow protocol
+and runs it on the drive's 6502. Nothing rewired.*
+
 Note:
-Four capabilities. Items 1 and 4 are cuttable; items 2 and 3 are not.
+CUT DOWN (C1). This was a four-item list; Appendix A's "§2.4 items 1 and 4"
+(the second wire, and M-W/M-E) are gone. Item 4's MECHANISM is retained as the
+closing line below, because without it the audience is told software beat the
+bus by 40x and never told how the code got into the drive.
+
+Cycle-matching is the one to dwell on — it is what replaced handshaking, and
+it is why the drive code needed no PAL/NTSC change. The upload line is a
+throwaway: say it and move on.
+
+Badline dodging, the remaining item, is the NEXT slide and is protected.
 	</script>
 </section>
 
 <section data-markdown>
 	<script type="text/template">
-## 3. Dodge the badline — don't accommodate it
+## Dodge the badline — don't accommodate it
 
-```
-  Commodore:   slow the ENTIRE PROTOCOL, permanently
-               ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-  Fastloader:  wait for the badline, transfer in the gap
-               ████░░░░████░░░░████░░░░████░░░░
-                   ▲       ▲       ▲
-                   periodic = schedulable
-```
+![Commodore's row is one permanently slowed bar while the fastloader row transfers in wide bursts between narrow periodic badline gaps, which makes the interference schedulable.](img/dodge-the-badline.svg)
 
 ### Commodore paid a **permanent global cost**
 ### to avoid a **locally avoidable** problem.
 
 Note:
-ITEM 3 IS THE SHARPEST POINT IN THE TALK. Never cut it.
+THE SHARPEST POINT IN THE TALK. Never cut it. (Appendix A protects this as
+"§2.4 item 3" — the numbering is gone from the slides after C1, but this is
+the slide that reference means.)
 
 Commodore's answer to VIC-II interference was to slow the ENTIRE PROTOCOL,
 permanently. Fastloaders check the raster and transfer in the gap — because
 the interference is periodic and therefore schedulable.
-	</script>
-</section>
-
-<section data-markdown>
-	<script type="text/template">
-## 4. The drive's own DOS opens the door
-
-```
-   M-W   memory-write    ──►  upload code into drive RAM
-   M-E   memory-execute  ──►  jump to it
-```
-
-Uploaded **over the slow protocol**, then run on the drive's own 6502.
-
-Nothing rewired. Nothing patched in the host ROM.
-
-Note:
-Item 4. The drive's own DOS ships the subversion mechanism. Upload over the
-slow protocol, execute on the drive's CPU. Nothing rewired.
-	</script>
-</section>
-
-<section data-markdown>
-	<script type="text/template">
-## On unmodified hardware
-
-| | speed | factor |
-|---|---|---|
-| Stock KERNAL | 403 B/s | 1× |
-| JiffyDOS | — | ~9× |
-| Vorpal | ~12,600 B/s | ~25× |
-| **Transwarp** | **~16,000 B/s** | **~40×** |
-
-### No cartridge. No hardware modification.
-
-Note:
-The numbers. SAY "about forty times" — the byte figures are enthusiast
-benchmarks that vary by file, drive and method.
 	</script>
 </section>
 
@@ -751,6 +578,13 @@ benchmarks that vary by file, drive and method.
 Note:
 THE REVERSAL. Put the two figures side by side and let the audience do the
 arithmetic themselves.
+
+SAY "about forty times" — the byte figures are enthusiast benchmarks that vary
+by file, drive and method. This is the caveat that used to sit on the speed
+table; the table was cut (C3), so it lives here now, where the figure is spoken.
+
+Say also: "no cartridge, no hardware modification" — that was the table's
+closing line and it still needs saying.
 
 16 KB/s achieved in software, against 10 KB/s designed in hardware in 1980.
 The community beat the original design goal on the wiring Commodore shipped.
@@ -791,13 +625,7 @@ clock rate was known exactly.
 
 <br>
 
-```
-  1980  design intent        > 10 KB/s
-  1981  VIC-20/1540          ~2 KB/s      (bug + workaround)
-  1982  C64/1541             < 1 KB/s     (worse)
-  1984  fastloaders          ~16 KB/s     (community)
-  1986  C128/1571            ~2.1 KB/s    (Commodore, at last)
-```
+![Timeline of transfer speeds, 1980 to 1986: design intent above 10 KB/s, the VIC-20 and C64 shipping at about 2 and under 1 KB/s, community fastloaders reaching about 16 KB/s in 1984, and Commodore's own fix arriving at about 2.1 KB/s in 1986.](img/five-years.svg)
 
 ### Five years. Three machine generations.
 
@@ -809,7 +637,9 @@ designed, while third parties had already beaten it from userland.
 First statement of the through-line.
 	</script>
 </section>
+</section>
 
+<section>
 <section data-markdown>
 	<script type="text/template">
 # Act 3
@@ -826,24 +656,7 @@ ACT 3 — THE OPERATING SYSTEM AND ITS FOSSIL — 11 min
 	<script type="text/template">
 ## The C64 has no disk operating system
 
-```
-   APPLE II / PC              COMMODORE
-   ═════════════              ═════════
-
-   ┌───────────┐              ┌───────────┐
-   │ COMPUTER  │              │ COMPUTER  │
-   │  ┌─────┐  │              │           │  "LOAD this"
-   │  │ DOS │  │              └─────┬─────┘
-   │  └─────┘  │                    │
-   └─────┬─────┘                    │ 2 wires
-         │ dumb                     │
-   ┌─────┴─────┐              ┌─────┴─────┐
-   │  MECHANISM│              │ COMPUTER  │
-   └───────────┘              │  ┌─────┐  │
-                              │  │ DOS │  │
-                              │  └─────┘  │
-                              └───────────┘
-```
+![Where the DOS lives: an Apple II or PC keeps DOS inside the computer above a dumb mechanism, while a Commodore says "LOAD this" over two wires to a second computer that holds the DOS.](img/dos-location.svg)
 
 Note:
 The C64 has no disk operating system. DOS 2.6 lives in the drive and runs on
@@ -858,10 +671,7 @@ This is the inverse of Apple DOS 3.3 and PC DOS.
 	<script type="text/template">
 ## Talking to a peer
 
-```
-   channels 0–14   ──►  file data (each bound to a filename)
-   channel  15     ──►  commands in, status out
-```
+![Channels 0 to 14 flow to file data, each bound to a filename; channel 15 flows to commands in and status out.](img/channels.svg)
 
 <br>
 
@@ -878,27 +688,16 @@ The channel model. The IEC secondary address IS the channel number — the
 abstraction is bus-level, not software-level.
 
 Errors come back as conversation.
-	</script>
-</section>
 
-<section data-markdown>
-	<script type="text/template">
-## Credit where it is due
+The fairness slide is cut (Appendix A item 4). BE FAIR ANYWAY — say it in one
+sentence over this slide, because it makes the criticism that follows land
+harder, not softer:
 
-The drive interprets **high-level commands**, not block requests.
+"And this aged well in one respect — several computers can share one drive with
+no host coordination, and the drive outlives its host's software. Commodore got
+something real here."
 
-- several computers can share one drive, no host coordination
-- the drive outlives its host's software
-- the filesystem is not a library you must port
-
-### This is a genuinely distributed design. It aged well.
-
-Note:
-BE FAIR HERE. This aged well in one respect: several computers can share a
-drive with no host coordination, and a drive can outlive its host's software.
-Commodore got something real.
-
-Saying this makes the criticism land harder, not softer.
+Then turn on "And yet."
 	</script>
 </section>
 
@@ -951,18 +750,7 @@ Let two or three people answer before revealing.
 	<script type="text/template">
 ## It is a drive number
 
-```
-   PET-era dual drive (4040, 8050)      1541
-   ════════════════════════════════     ════
-
-   ┌─────────┬─────────┐                ┌─────────┐
-   │ drive 0 │ drive 1 │                │ drive 0 │
-   │  LEFT   │  RIGHT  │                │         │
-   └─────────┴─────────┘                └─────────┘
-       real      real                       only
-                                          possible
-                                            value
-```
+![PET-era dual drives like the 4040 and 8050 had a real drive 0 and drive 1 in one unit; on the 1541, drive 0 is the only possible value.](img/drive-number.svg)
 
 Note:
 It is a drive number. On a 1541 it can only ever be zero.
@@ -1033,21 +821,7 @@ read in full.
 	<script type="text/template">
 ## How a ghost corrupts your disk
 
-```
-  buffers:  [0] [1] [2] [3] [4]
-                      ▲
-                      └── allocated to a drive that does not exist
-                          ...and unstealable (it "errored")
-
-  SAVE@ needs all 5.  Only 4 available.
-        │
-        └──►  steals the BAM instead
-              │
-              └──►  only 2 track-images fit
-                    │
-                    └──►  "may be updated correctly, be left
-                           unchanged, or be fully allocated"
-```
+![Buffer 2 of five is allocated to a drive that does not exist and cannot be stolen, so save-with-replace finds only four buffers, steals the BAM instead, and only two track images fit.](img/ghost-corruption.svg)
 
 Note:
 Walk the mechanism. Five buffers; save-with-replace needs all five; the phantom
@@ -1074,7 +848,9 @@ SAY THIS: "And the folklore workaround — always type 0: when you save — does
 work. Slaymaker tested it. Any directory access without a drive number arms it."
 	</script>
 </section>
+</section>
 
+<section>
 <section data-markdown>
 	<script type="text/template">
 # Act 4
@@ -1095,14 +871,7 @@ The drive has **no track-zero sensor**.
 
 After an error it cannot know where the head is.
 
-```
-   recalibration:  step out ──► step out ──► step out ──► ...
-                                                    ▲
-                              ┌─────────────────────┘
-                              │  mechanical stop
-                              │  (and keep going)
-                         ═════╧═════
-```
+![The head steps outward again and again until the final step rams into a mechanical stop, and the drive keeps stepping](img/head-recalibration.svg)
 
 ### That sound is the head being rammed out of alignment.
 
@@ -1126,12 +895,6 @@ SAY "repeatedly" — NOT "40 times". That count is not verified from a primary.
 > repaired *"several hundred"* drives — the head-alignment part
 > *"was to blame in **all but three** cases"*
 
-<br>
-
-Independent corroboration, different population:
-
-### **four of the magazine's own seven drives** failed the same way
-
 Note:
 The damage was real. Compute's Gazette, December 1983 — Robert Lock's editorial,
 read at source.
@@ -1139,9 +902,13 @@ read at source.
 THEN SAY THE CAVEAT OUT LOUD. It costs ten seconds and is the difference between
 a talk that can be checked and one that cannot.
 
-SAY THIS OUT LOUD: "That's one dealer's recollection relayed by an editor. No
-methodology, no denominator. It's a strong signal — it is not a measured failure
-rate."
+The corroborating figure is cut (Appendix A item 3). If a questioner presses on
+whether one dealer is enough, it is there to deploy: four of the magazine's own
+seven drives failed the same way — a second population, not the dealer's.
+
+SAY THIS OUT LOUD REGARDLESS: "That's one dealer's recollection relayed by an
+editor. No methodology, no denominator. It's a strong signal — it is not a
+measured failure rate."
 	</script>
 </section>
 
@@ -1211,7 +978,9 @@ COMPATIBILITY, not cost. That connects to the installed-base thread rather than
 the cost-cutting one.
 	</script>
 </section>
+</section>
 
+<section>
 <section data-markdown>
 	<script type="text/template">
 # Act 5
@@ -1286,7 +1055,9 @@ What it actually cost. Not only users — Commodore itself. Lock's editorial is
 about a NATIONWIDE SHORTAGE.
 	</script>
 </section>
+</section>
 
+<section>
 <section class="lead" data-markdown>
 	<script type="text/template">
 # 170.75 KiB
@@ -1351,6 +1122,7 @@ Q&A. Likely questions and where the answers live:
 - Anything on the C128/Apple material — the citation chains there run through
   secondary sources (obs-0017). Say so rather than guessing.
 	</script>
+</section>
 </section>
 			</div>
 		</div>
