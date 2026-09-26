@@ -1,0 +1,1135 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>The Drive That Fought Its Own Computer</title>
+		<meta name="deck-origin" content="sibling:../research/c64-architecture/speech.md">
+
+		<!--
+			STYLESHEET ORDER IS LOAD-BEARING.
+
+			custom.css is LAST so it wins over the theme. PLAN-0001 Step 2.3 asserts this, and
+			the build's verify step checks it by reading the emitted HTML back — not by trusting
+			an exit code. The order mirrors ../pixelove2026/index.html:9-12, which is
+			reset, reveal, theme, custom.
+
+			Do not append a stylesheet after custom.css.
+		-->
+		<link rel="stylesheet" href="reset.css">
+		<link rel="stylesheet" href="reveal.css">
+		<link rel="stylesheet" href="theme.css">
+		<link rel="stylesheet" href="custom.css">
+
+		<!-- No syntax highlighting, DELIBERATELY (author decision, 2026-09-25): code
+		     snippets render monochrome in the theme's code font. The highlight plugin,
+		     its monokai.css and its script are removed rather than disabled, so nothing
+		     ships that isn't used. The example deck (../pixelove2026/index.html:15) does
+		     load the plugin; this pipeline diverges from the baseline on purpose here. -->
+	</head>
+
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<!--
+					The preprocessed deck. Phase 3 (one preprocessor file, per Step 3.0's
+					measurement) strips the marp frontmatter, moves each slide's _class
+					directive onto its section, and converts speaker-note comments into a
+					single Note: block that reveal turns into aside.notes.
+
+					Do not write comment delimiters inside a comment in this file — neither an
+					opener nor a closer. HTML comments do not nest: the parser ends the comment
+					at the first closing delimiter it meets, and everything after it becomes
+					live markup rendered over the deck. This happened twice on 2026-09-17, the
+					second time in a comment warning about the first.
+
+					No data-separator attribute: reveal's DEFAULT_SLIDE_SEPARATOR is already
+					'\r?\n---\r?\n', so the `---` breaks split natively. The Step 3.0 spike
+					confirmed this empirically against 61 real breaks.
+				-->
+				<section>
+<section data-background-image="img/title-1541-drive.jpg" data-background-size="cover" data-background-opacity="0.4" data-markdown>
+	<script type="text/template">
+# Napęd, który walczył z własnym komputerem
+
+## Commodore 1541 i o tym, jak nie budować systemu
+
+Note:
+UWAGI DLA PRELEGENTA — PRZECZYTAJ NAJPIERW
+
+Cel: ~45 min. Oba zestawy cięć są zastosowane — pozycje 1-4 z Dodatku A oraz
+cięcia C1/C3/C4 w Akcie 2 z speech-cutdown-analysis.md. To jest wersja
+45-minutowa, nie 55-minutowa; pełny materiał leży w gicie.
+
+W czterech miejscach trzeba POWIEDZIEĆ zdanie nad slajdem, który przetrwał,
+bo slajd stawiający daną tezę został wycięty. Są oznaczone w uwagach: detal
+o strefach (Akt 1), wprowadzenie o cenach (Akt 0.5), wątek o uczciwości
+projektu rozproszonego (Akt 3) oraz potwierdzające liczby o napędach (Akt 4).
+
+Mapa dowodów i zastrzeżenia do tez: speech-syllabus.md, Dodatki B i C.
+
+TRZY RZECZY DO POWIEDZENIA DOKŁADNIE TAK, JAK NAPISANO, bo to one dzielą
+wykład, który przetrwa pytania, od takiego, który nie przetrwa. Lokalizowane
+po TYTULE SLAJDU, nie po numerze — numery już raz się przesunęły i przesuną
+się znowu:
+  1. Liczba „wszystkie poza trzema" od sprzedawcy to jego wspomnienie, a nie
+     wskaźnik awaryjności. -> slajd „Szkody były prawdziwe"
+  2. Nigdy nie mów „40 razy" o liczbie uderzeń głowicy — nie jest to
+     potwierdzone źródłem pierwotnym. Mów „wielokrotnie".
+     -> slajd „[zagraj terkot jeszcze raz]"
+  3. Prędkości fastloaderów są rzędu wielkości. Mów „około czterdziestu razy",
+     nie podawaj liczby bajtów. -> slajd „Społeczność pobiła pierwotny cel
+     projektowy" (to zastrzeżenie trafiło tutaj, gdy wycięto tabelę prędkości)
+
+Myśl przewodnia do powtórzenia przy każdej przerwie aktu: poprawka istniała
+i nie została zastosowana.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+# 🔊
+
+Note:
+ZIMNE OTWARCIE — 3 min. Nie tłumacz tego dźwięku. Terkot wraca w Akcie 4
+i publiczność ma go rozpoznać, a nie usłyszeć przypomnienie.
+
+Zagraj ~10 sekund ładowania z 1541, potem terkot uderzającej głowicy.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Dwie liczby
+
+# 170,75 KiB
+
+### tyle mieści dyskietka
+
+# < 1 KB/s
+
+### tak szybko można z niej czytać
+
+Note:
+Niech to wybrzmi. Dwie liczby, nic więcej na slajdzie. Przepaść między nimi
+to cały wykład.
+
+Powiedz: „To 170 kilobajtów bardzo dobrej inżynierii, podanych przez słomkę."
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Pytanie
+
+### Dlaczego Commodore zbudowało **tak dobry** napęd
+
+### i **tak źle** go zintegrowało?
+
+<br>
+
+**Odpowiedź bynajmniej nie brzmi „ze skąpstwa."**
+
+Note:
+Postaw pytanie i złóż obietnicę. Obietnica jest ważna — mówi publiczności,
+że to nie jest ten wykład, który już słyszeli.
+	</script>
+</section>
+</section>
+
+<section>
+<section data-markdown>
+	<script type="text/template">
+# Akt 0.5
+
+## Skąd się wzięła dyskietka
+
+Note:
+=========================================================
+AKT 0.5 — SKĄD SIĘ WZIĘŁA DYSKIETKA — 2 min
+SKRÓCONY do samego §0.5.2 (Dodatek A, pozycja 1). Slajdy o rodowodzie w IBM
+i slajd o cenach Shugarta są wycięte; zostaje rozróżnienie sekwencyjny kontra
+swobodny dostęp, bo to ono sprawia, że Akt 3 brzmi jak nieuchronność, a nie
+ekscentryzm. To jedyny powód, dla którego ten akt w ogóle przetrwał.
+
+Jeśli potrzebujesz historii pochodzenia do dłuższego wariantu, jest w gicie
+i w obs-0047.
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Dlaczego nie użyć po prostu taśmy?
+
+![Taśma jest sekwencyjna: żeby dotrzeć do F, trzeba przewinąć przez A do E. Dysk ma dostęp swobodny: głowica przesuwa się prosto na ścieżkę](img/tape-vs-disk.pl.svg)
+
+### Dyskietka to nie **lepsza taśma**, to **inna struktura danych**.
+
+Note:
+KLUCZOWY SLAJD TEGO AKTU. Jeśli wytniesz z 0.5 wszystko inne, ten zostaw.
+
+Kusząca odpowiedź brzmi „dyskietki są wytrzymalsze". Prawda, ale nieistotna.
+Różnica jest kategorialna: taśma jest sekwencyjna, dysk ma dostęp swobodny.
+To nie lepsza taśma — to inna struktura danych.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Co daje dostęp swobodny
+
+<div class="layout-two-column">
+<div class="col col-left">
+
+![Mechanizm napędu 1541 na fotografii: zespół głowicy na prowadnicach, nad silnikiem talerza](img/1541-mechanism.jpg)
+
+</div>
+<div class="col col-right">
+
+- **katalog**, który da się odczytać bez skanowania całego nośnika
+- **mapa przydziału bloków**
+- pliki aktualizowane **w miejscu**
+
+<br>
+
+### → system plików, który warto napisać
+
+### → **system operacyjny, który warto włożyć do napędu**
+
+</div>
+</div>
+
+Note:
+Wyłóż konsekwencję, bo Akt 3 na niej stoi. Wszystko, czego potrzebuje
+historia 1541, wynika z dostępu swobodnego, a nic z wytrzymałości.
+
+Puenta: dostęp swobodny jest tym, co sprawia, że warto napisać system plików
+— a więc i tym, co sprawia, że warto włożyć system operacyjny do napędu.
+
+Slajd o cenach, który tu kiedyś następował, jest wycięty (Dodatek A,
+pozycja 1). Zachowaj jego jednozdaniowe wprowadzenie ustnie, jeśli pomaga
+w przejściu: napędy kosztowały więcej niż komputery, do których je
+podłączano, a prawdziwym osiągnięciem Commodore było uczynienie dostępu
+swobodnego przystępnym cenowo. Potem przejdź prosto do Aktu 1.
+	</script>
+</section>
+</section>
+
+<section>
+<section data-markdown>
+	<script type="text/template">
+# Akt 1
+
+## Napęd jest komputerem
+
+Note:
+=========================================================
+AKT 1 — NAPĘD JEST KOMPUTEREM — 9 min
+Ustal kompetencję. Publiczność musi uwierzyć, że napęd jest dobry, inaczej
+Akt 2 nie będzie miał czego burzyć.
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Wnętrze 1541
+
+<div class="layout-two-column">
+<div class="col col-left">
+
+![Płyta główna 1541 na fotografii: własny komputer napędu na jednej płytce](img/1541-mainboard.jpg)
+
+</div>
+<div class="col col-right">
+
+![Wnętrze 1541: 6502 taktowany 1 MHz, 2 KiB SRAM, 16 KiB ROM z CBM DOS 2.6 i dwa układy 6522 VIA](img/inside-a-1541.pl.svg)
+
+### To nie jest peryferium.
+
+### Ma praktycznie ten sam procesor, co zarządzający nim komputer.
+
+</div>
+</div>
+
+Note:
+Otwórz obudowę. Powiedz to zdanie: to nie jest peryferium. Ma praktycznie
+ten sam procesor, co zarządzający nim komputer.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Problem geometrii
+
+![Talerz dysku narysowany jako współśrodkowe ścieżki: zewnętrzna jest o 46% dłuższa od wewnętrznej, a format o stałej liczbie sektorów mieści na obu tyle samo, marnując zewnętrzną część dysku](img/track-geometry.pl.svg)
+
+Note:
+Zapis strefowy. Zacznij od problemu geometrycznego, nie od rozwiązania —
+publiczność ma najpierw poczuć marnotrawstwo, a dopiero potem zobaczyć
+poprawkę.
+
+Ścieżka 1 jest o 46% dłuższa niż ścieżka 35. Format o stałej liczbie
+sektorów to wyrzuca.
+
+Tabela stref jest wycięta (Dodatek A, pozycja 2). To fakt o 46% na tym
+slajdzie niesie całą tezę; tabela była detalem.
+
+POWIEDZ nad tym slajdem: „Dlatego 1541 zmienia szybkość bitową zależnie od
+promienia — cztery strefy, 21 sektorów na zewnętrznych ścieżkach, aż do 17
+na wewnętrznych. To zapis strefowy, lata przed tym, zanim branża go
+ustandaryzowała."
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Po co w ogóle kodować?
+
+Silniki napędowe różnią się między egzemplarzami.
+
+Długiego ciągu identycznych bitów **nie da się wiarygodnie zliczyć**.
+
+<br>
+
+![Schemat przepływu: tablica o 16 wpisach koduje każde 4 bity danych jako 5 bitów na dysku, pod regułą nie więcej niż dwóch zer pod rząd, wewnątrz grupy i na styku grup.](img/gcr-encoding.pl.svg)
+
+Note:
+GCR. Najpierw ograniczenie FIZYCZNE. Silniki napędowe w różnych napędach
+kręcą się z nieco różną prędkością, więc długiego ciągu identycznych bitów
+nie da się wiarygodnie zliczyć. Więcej niż dwa zera pod rząd są niedozwolone.
+
+Stąd 4 bity -> 5 bitów z tablicy o 16 wpisach, zbudowanej tak, by
+ograniczenie przetrwało NA STYKU sklejonych grup, a nie tylko wewnątrz nich.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Kodowanie tworzy własną interpunkcję
+
+Zakodowane dane **nigdy** nie mogą zawierać długiego ciągu jedynek.
+
+![Strumień zakodowanych bitów, w którym ciąg dziesięciu jedynek odcina się akcentem: niemożliwy w zakodowanych danych, więc służy jako znacznik synchronizacji sektora](img/sync-mark.pl.svg)
+
+### Ograniczenie nie tylko chroni dane — ono je rozgranicza.
+
+Note:
+Elegancka konsekwencja. Zatrzymaj się tu — to najładniejszy pomysł w Akcie 1.
+
+Ponieważ zakodowane dane nigdy nie mogą zawierać długiego ciągu jedynek,
+ciąg dziesięciu jedynek jest jednoznaczny. To jest znacznik synchronizacji
+sektora. Kodowanie tworzy własną interpunkcję.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+## Wszystko, co do tej pory widzieliśmy, to dobra inżynieria.
+
+## Zobaczmy zatem, jak zmarnowano ten wysiłek.
+
+Note:
+Zwrot. Jedno zdanie. Wszystko dotąd to dobra inżynieria — teraz zobaczmy,
+jak zmarnowano ten wysiłek.
+	</script>
+</section>
+</section>
+
+<section>
+<section data-markdown>
+	<script type="text/template">
+# Akt 2
+
+## Kabel
+
+Note:
+=========================================================
+AKT 2 — KABEL — 14 min — KRĘGOSŁUP WYKŁADU
+Nie tnij. Publiczność przychodzi z założeniem „nowa maszyna, nowe układy,
+naprawione" i trzy fakty obalają je po kolei.
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Miało być szybko
+
+Tramiel: rezygnujemy z IEEE-488 —
+
+> *"make it a cable anyone can manufacture"*
+> (zróbcie z tego kabel, który każdy może produkować)
+
+<br>
+
+Założenie projektowe, 1980:
+
+## ~4 µs/bit · **> 10 KB/s**
+
+### sprzętowy rejestr przesuwny
+
+### **Nikt nie projektował tej stacji jako wolnej.**
+
+Note:
+Ustal fakt, na którym stoi cały akt: magistralę zaprojektowano jako SZYBKĄ.
+Nie zdefiniowano jej jako wolnej.
+
+Polecenie Tramiela: zejść z drogiego, jednoźródłowego kabla IEEE-488.
+Belden był jedynym źródłem i w pewnym momencie wyczerpał zapasy.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Błąd
+
+Rejestr przesuwny układu 6522 **gubi bit**, gdy zewnętrzny impuls
+zbiegnie się ze zboczem zegara wewnętrznego.
+
+<br>
+
+
+> problem był znany od dawna, istniały odpowiednie noty aplikacyjne
+
+> *"...lecz inżynierowie od VIC-20 o tym nie wiedzieli"
+
+Note:
+Usterka. Rejestr przesuwny 6522 gubi bit, gdy zewnętrzny impuls zbiegnie się
+ze zboczem zegara wewnętrznego.
+
+Kluczowe ujęcie: to NIE była porażka inżynierska. To była porażka
+KOMUNIKACYJNA. Firma już wiedziała.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+## To nie porażka inżynierska.
+
+## To porażka **komunikacyjna**.
+
+Note:
+Powiedz to precyzyjnie. To najbardziej cytowalne ujęcie w całym wykładzie.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Obejście
+
+![Dwa słupki na jednej skali zestawiają zaprojektowane 4 µs na bit sprzętowego rejestru przesuwnego z dostarczonymi 20 µs na bit przy bit-bangingu na procesorze po obu stronach.](img/bit-banging.pl.svg)
+
+> *"bit-catcher"* (łapacz bitów) zamiast *"character-catcher"* (łapacza znaków)
+
+**8× więcej pracy procesora · 5–6× wolniej niż planowano**
+
+Note:
+Obejście: pełny odwrót do bit-bangingu na procesorze. 4 µs -> 20 µs na bit.
+
+Zwrot Butterfielda jest tu do zachowania: maszyna stała się „łapaczem bitów"
+zamiast „łapaczem znaków". Ośmiokrotnie więcej pracy procesora.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## C64 ma działające rejestry przesuwne
+
+### Czyli naprawione? No przecież!
+
+<br><br>
+
+### ...trzy powody, dla których jednak nie.
+
+Note:
+CENTRALNY ZWROT AKTU 2. Publiczność spodziewa się, że C64 to naprawi — nowa
+maszyna, nowe układy CIA z DZIAŁAJĄCYMI rejestrami przesuwnymi.
+
+Trzy fakty to obalają. Podaj je w tej kolejności, jak zamykające się kolejno
+drzwi.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 1. Napęd został przy wadliwym układzie
+
+![C64 ma poprawiony układ CIA 6526, ale 1541 został przy wadliwym 6522 VIA, a klamra łącząca je odnotowuje, że protokół potrzebuje działającego krzemu po obu stronach.](img/both-ends.pl.svg)
+
+1541 to lekko poprawiony 1540.
+
+**Przeróbka napędu kosztowała.**
+
+Note:
+Drzwi 1. Protokół z przesuwaniem sprzętowym potrzebuje działającego krzemu
+po OBU stronach. 1541 to lekko poprawiony 1540 i został przy 6522.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 2. Linie sygnałowe prowadzą do niewłaściwego złącza
+
+![Nóżki SP i CNT układu CIA 6526 prowadzą do nieużywanego portu użytkownika; przewód w stronę złącza IEC jest przerwany i przekreślony, bo nigdy go nie poprowadzono.](img/pins-wrong-connector.pl.svg)
+
+Nie o łatkę w ROM-ie chodziło — trzeba było **przerobić płytę**.
+
+*Dopiero C128 zawiera odpowiednio poprawione połączenia.*
+
+Note:
+Drzwi 2. Najlepszy fakt w tym akcie. Nóżki z poprawką fizycznie prowadzą do
+niewłaściwego złącza — SP/CNT są wyprowadzone na PORT UŻYTKOWNIKA, a nie na
+złącze IEC.
+
+Włączenie szybkiego protokołu nie było łatką w ROM-ie. Wymagało przerobienia
+płyty. C128 zrobił dokładnie to, wykorzystując bezczynną dotąd linię SRQ.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 3. VIC-II to sabotował
+
+![Oś czasu procesora, na której DMA badline wstrzymuje procesor na około 40 mikrosekund co mniej więcej 500, łamiąc programowe 20-mikrosekundowe taktowanie bitów.](img/badline-timeline.pl.svg)
+
+Odpowiedź Commodore: rozluźnić protokół **asymetrycznie**.
+
+Urządzenie → komputer: **~60 µs/bit**. Poniżej 1 KB/s.
+
+Note:
+Drzwi 3. VIC-II. DMA badline wstrzymuje procesor na ~40 µs co ~500 µs,
+łamiąc programowe 20 µs podczas odbioru.
+
+Zamiast uzależnić transfery od taktowania obrazu, Commodore rozluźniło
+protokół ASYMETRYCZNIE. Zapamiętaj ten wybór — Akt 2.4 do niego wraca.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+## C64 nie tylko odziedziczył wolną magistralę.
+
+## On ją odziedziczył — **i spowolnił jeszcze bardziej.**
+
+### Winny jest układ VIC-II, odpowiedzialny za sukces rynkowy C64.
+
+Note:
+Puenta 2.3. Podaj ją płasko, bez ozdobników.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Prędkość fabryczna
+
+# 403 bajty/s
+
+<br>
+
+### Skoro powolność bierze się z usterki układu i z układu graficznego
+
+### podkradającego cykle...
+
+### ...to w jaki sposób udało się naprawić ten problem bez modyfikacji sprzętowej?
+
+Note:
+=========================================================
+AKT 2.4 — ZWROT AKCJI — 4 min
+Najpierw zastaw pułapkę. 403 bajty na sekundę. Potem pytanie, które
+publiczność powinna być już gotowa zadać.
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## IEC: Zmarnowana szansa
+
+![Dwie fazy na jednym kablu szeregowym: najpierw C64 wgrywa loader wolnym, fabrycznym protokołem do 1541, gdzie działa on na procesorze 6502 napędu; potem dane pliku płyną z powrotem z dopasowaniem cykli, bez uzgadniania. Ten sam przewód, żadnych przeróbek.](img/fastloader-two-phase.pl.svg)
+
+Note:
+SKRÓCONE (C1). To była lista czteropunktowa; pozycje „§2.4 punkty 1 i 4"
+z Dodatku A (drugi przewód oraz M-W/M-E) zniknęły. MECHANIZM z punktu 4
+zostaje, bo bez niego publiczność słyszy, że oprogramowanie pobiło
+magistralę 40-krotnie, i nigdy nie dowiaduje się, jak kod trafił do napędu.
+
+PRZERYSOWANE 2026-09-25: treść slajdu stała się dwufazową grafiką
+(img/fastloader-two-phase.pl.svg). Publiczność CZYTA mechanizm; liczby
+przeniosły się tutaj, do POWIEDZENIA nad grafiką:
+
+POWIEDZ, nad fazą 1: „Wgranie kodu to ta nudna część — własny DOS napędu
+wgrywa loader wolnym protokołem i uruchamia go na procesorze 6502 napędu.
+Wszystko na seryjnym, niemodyfikowanym C64."
+
+POWIEDZ, nad fazą 2 — dopasowanie cykli to rzecz, przy której warto się
+zatrzymać, bo to ono zastąpiło uzgadnianie: „Oba procesory chodzą około
+1 MHz, więc obie strony UMAWIAJĄ SIĘ na takt, zamiast potwierdzać każdy
+bit — '14 clock cycles delay for PAL and 15 for NTSC', czyli 14 cykli
+opóźnienia dla PAL i 15 dla NTSC. PAL kontra NTSC to jedna instrukcja po
+stronie C64. Kod w napędzie: bez zmian."
+
+Omijanie badline, czyli pozostały punkt, to NASTĘPNY slajd i jest chroniony.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Omijaj badline — nie dostosowuj się do niego
+
+![Wiersz Commodore to jeden trwale spowolniony słupek, a wiersz fastloadera przesyła szerokimi seriami pomiędzy wąskimi, okresowymi przerwami badline, co czyni zakłócenie dającym się zaplanować.](img/dodge-the-badline.pl.svg)
+
+### Commodore poniosło **trwały, globalny koszt**,
+
+### by uniknąć problemu **usuwalnego lokalnie**.
+
+Note:
+NAJOSTRZEJSZY PUNKT WYKŁADU. Nigdy go nie tnij. (Dodatek A chroni go jako
+„§2.4 punkt 3" — numeracja zniknęła ze slajdów po C1, ale to jest ten slajd,
+o którym mówi tamto odwołanie.)
+
+Odpowiedzią Commodore na zakłócenia od VIC-II było spowolnienie CAŁEGO
+PROTOKOŁU, na stałe. Fastloadery sprawdzają raster i przesyłają w przerwie —
+bo zakłócenie jest okresowe, a więc daje się zaplanować.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Społeczność pobiła pierwotny cel projektowy
+
+# ~19 KB/s
+
+### osiągnięte programowo
+
+# > 10 KB/s
+
+### sprzętowy cel projektowy, 1980
+
+### **Czyli to nie kabel był ograniczeniem.**
+
+Note:
+ODWRÓCENIE. Postaw obie liczby obok siebie i pozwól publiczności samej
+wykonać działanie.
+
+POWIEDZ „około czterdziestu razy" — liczby bajtów to pomiary entuzjastów,
+zmienne zależnie od pliku, napędu i metody. To zastrzeżenie siedziało kiedyś
+przy tabeli prędkości; tabelę wycięto (C3), więc mieszka teraz tutaj, tam
+gdzie liczba pada.
+
+Powiedz też: „bez kartridża, bez przeróbek sprzętowych" — to było zamykające
+zdanie tamtej tabeli i nadal trzeba je powiedzieć.
+
+16 KB/s osiągnięte programowo, przeciwko 10 KB/s zaprojektowanym sprzętowo
+w 1980. Społeczność pobiła pierwotny cel projektowy na okablowaniu, które
+dostarczyło Commodore.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Skąd się naprawdę wzięło przyspieszenie
+
+
+### Protokół napisany tak, by współpracował z **nieznanym** sprzętem
+
+### ...na magistrali, gdzie częstotliwość zegara jedynego peryferium
+
+### była znana **dokładnie**.
+
+Note:
+Synteza Aktu 2. To zdanie jest tym, na co cały akt pracuje.
+
+Usterka usunęła ścieżkę sprzętową. Programowy zamiennik oddał potem
+znacznie więcej, niż wymagała usterka — bo napisano go tak, by był bezpieczny
+wobec peryferiów o nieznanym taktowaniu, na magistrali, gdzie częstotliwość
+zegara jedynego peryferium była znana dokładnie.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Poprawka Commodore: 1986
+
+**C128 / 1571 — Fast Serial.** Projekt z 1980, wreszcie dostarczony.
+
+<br>
+
+![Prędkości transferu na jednej skali: założenia projektowe powyżej 10 KB/s w 1980, VIC-20 i C64 dostarczone przy najwyżej około 0,5 i około 0,4 KB/s, fastloadery społeczności około 5–6 KB/s w 1984, własna poprawka Commodore przy 4–5 KB/s w 1986 oraz Transwarp z rekordem 19 KB/s — około pięćdziesiąt razy szybciej niż fabrycznie — na tym samym przewodzie w 2020.](img/five-years.pl.svg)
+
+### Pięć lat. Trzy pokolenia maszyn.
+
+Note:
+Zamknij Akt 2. Własna poprawka Commodore, Fast Serial, przyszła w 1986 roku
+z C128/1571 — pięć lat i trzy pokolenia maszyn, żeby dostarczyć magistralę
+taką, jak ją zaprojektowano, podczas gdy firmy trzecie już dawno pobiły ją
+z poziomu użytkownika.
+
+DANE POPRAWIONE 2026-09-25 (autor): fastloadery z połowy lat 80. robią
+około 5–6 KB/s, nie ~16; Fast Serial w C128 robi 4–5 KB/s, nie ~2,1;
+rekord ~50× — 19 KB/s — to Transwarp, rok 2020, wciąż na tym samym
+przewodzie. Czyli wynik społeczności z 1984 bije poprawkę Commodore
+z 1986 dwa lata przed jej premierą, a wiersz rekordu pokazuje, na co
+ten przewód było stać od zawsze.
+Poprawione tego samego dnia: VIC-20/1540 to zapewne najwyżej ~0,5 KB/s
+(było ~2), a C64/1541 to ~0,4 KB/s — czyli 403 bajty/s ze slajdu
+o prędkości fabrycznej (było „< 1 KB/s").
+
+Pierwsze postawienie myśli przewodniej.
+	</script>
+</section>
+</section>
+
+<section>
+<section data-markdown>
+	<script type="text/template">
+# Akt 3
+
+## Relikty w systemie operacyjnym
+
+Note:
+=========================================================
+AKT 3 — SYSTEM OPERACYJNY I JEGO RELIKT — 11 min
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## C64 nie ma dyskowego systemu operacyjnego
+
+![Gdzie mieszka DOS: Apple II albo PC trzyma DOS wewnątrz komputera, nad głupim mechanizmem, a Commodore mówi „LOAD to" przez dwa przewody do drugiego komputera, który ma DOS u siebie.](img/dos-location.pl.svg)
+
+Note:
+C64 nie ma dyskowego systemu operacyjnego. DOS 2.6 mieszka w napędzie
+i działa na procesorze napędu. Host nie potrafi wylistować katalogu inaczej
+niż ŁADUJĄC go tak, jakby był programem.
+
+To odwrotność Apple DOS 3.3 i PC DOS.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Rozmowa jak równy z równym
+
+![Kanały od 0 do 14 prowadzą do danych plików, każdy związany z nazwą pliku; kanał 15 prowadzi do poleceń w jedną stronę i statusu w drugą.](img/channels.pl.svg)
+
+<br>
+
+```basic
+OPEN 15,8,15
+PRINT#15,"S0:OLDFILE"      : REM scratch
+INPUT#15,A$                : REM  "01, FILES SCRATCHED,01,00"
+```
+
+### Stacja "odpowiada" na kanale 15: `23,READ ERROR,18,00`
+
+Note:
+Model kanałów. Drugorzędny adres IEC JEST numerem kanału — abstrakcja jest
+na poziomie magistrali, nie oprogramowania.
+
+Błędy wracają jako rozmowa.
+
+Slajd o uczciwości jest wycięty (Dodatek A, pozycja 4). BĄDŹ UCZCIWY MIMO
+TO — powiedz to jednym zdaniem nad tym slajdem, bo dzięki temu krytyka, która
+zaraz nadejdzie, uderza mocniej, a nie słabiej:
+
+„I pod jednym względem to się dobrze zestarzało — kilka komputerów może
+dzielić jeden napęd bez żadnej koordynacji po stronie hosta, a napęd przeżywa
+oprogramowanie swojego hosta. Commodore osiągnęło tu coś realnego."
+
+Potem zrób zwrot na „A jednak."
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Niestety
+
+Żeby skasować plik:
+
+```basic
+OPEN 15,8,15,"S0:OLDFILE":CLOSE 15
+```
+
+**BASIC 2.0 nie ma poleceń dyskowych. Żadnych.**
+
+<br>
+
+Wedge'e i kartridże z fastloaderem, które wszyscy pamiętają,
+łatały dziurę w **BASIC-u** — nie w napędzie.
+
+*BASIC 3.0 miał te polecenia. C64 dostarczono ze starszym.*
+
+Note:
+A jednak. BASIC 2.0 nie ma żadnych poleceń dyskowych. Żeby skasować plik,
+otwierasz kanał komunikacyjny do równorzędnego urządzenia i wysyłasz mu napis.
+
+Wedge'e i kartridże z fastloaderem, które wszyscy pamiętają, łatały dziurę
+w BASIC-u — nie w napędzie. BASIC 3.0 miał te polecenia. C64 dostarczono
+ze starszym.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Pytanie do sali
+
+# LOAD"0:GAME",8
+
+<br>
+
+### Po co jest to `0:`?
+
+Note:
+RELIKT — 4 min. Najpierw zapytaj salę. Większość powie „nic" albo
+„przyzwyczajenie". Pozwól odpowiedzieć dwóm, trzem osobom, zanim odsłonisz.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## To jest numer napędu
+
+![Dwunapędowe stacje z epoki PET, takie jak 4040 i 8050, miały prawdziwy napęd 0 i napęd 1 w jednej obudowie; w 1541 napęd 0 to jedyna możliwa wartość.](img/drive-number.pl.svg)
+
+Note:
+To numer napędu. W 1541 może być tylko zerem.
+
+CBM DOS napisano dla DWUNAPĘDOWYCH stacji z epoki PET, gdzie napęd 0 był
+mechanizmem lewym, a napęd 1 prawym. DOS 1541 pochodzi od tamtego kodu.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+## Każde `0:` kiedykolwiek wystukane na C64
+
+## adresuje **lewy mechanizm**
+
+## dwunapędowej stacji, której ten użytkownik nigdy nie miał.
+
+Note:
+Postaw to mocno. To emocjonalne centrum Aktu 3.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## C64 zawiera dwa relikty
+
+| | utrwalony w | |
+|---|---|---|
+| **Tryb Ultimax** | krzemie | mapa pamięci konsoli, w każdym PLA |
+| **`0:`** | **interfejsie użytkownika** | adresowanie stacji dwunapędowej, wystukiwane ręcznie |
+
+Note:
+Nawiąż do Ultimaxa. Temat już przedstawia Ultimax jako „mapę pamięci obcej
+maszyny, utrwaloną w każdym C64". To samo zjawisko — tyle że utrwalone
+w INTERFEJSIE UŻYTKOWNIKA, wystukiwane ręcznie, miliony razy dziennie, przez
+dekadę.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Relikt może być niebezpieczny
+
+`SAVE"@0:NAME"` — zapis z zastąpieniem — **niszczy dane.**
+
+Note:
+Relikt gryzie. SAVE"@..." niszczy dane, a dezasemblacja Slaymakera
+z 1986 roku pokazuje dlaczego, w kategoriach samego DOS-u.
+
+„Phantom drive 1 (not present in a 1541 drive)" to JEGO sformułowanie —
+źródło pierwotne, przeczytane w całości.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+## Szczątkowa struktura, która niszczy prawdziwe dane,
+
+## nie jest pozostałością.
+
+## Jest **niezapłaconym kosztem migracji**.
+
+Note:
+Domknij Akt 3. Potem uwaga o ścisłości — powiedz ją na głos, kosztuje pięć
+sekund.
+
+Ludowe obejście „zawsze wpisuj 0: przy zapisie" jest NIEWYSTARCZAJĄCE.
+Slaymaker to sprawdził: każdy dostęp do katalogu bez numeru napędu może
+uzbroić tę usterkę.
+
+POWIEDZ TO: „A ludowe obejście — zawsze wpisuj 0: przy zapisie — nie działa.
+Slaymaker to sprawdził. Każdy dostęp do katalogu bez numeru napędu je
+uzbraja."
+	</script>
+</section>
+</section>
+
+<section>
+<section data-markdown>
+	<script type="text/template">
+# Akt 4
+
+## Autodestrukcja 1541
+
+Note:
+=========================================================
+AKT 4 — MASZYNA, KTÓRA SAMA SIĘ NISZCZYŁA — 7 min
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## 🔊
+
+Napęd **nie ma czujnika ścieżki zerowej**.
+
+Po błędzie nie może wiedzieć, gdzie jest głowica.
+
+![Głowica kroczy na zewnątrz raz za razem, aż ostatni krok wbija ją w mechaniczny ogranicznik, a napęd kroczy dalej](img/head-recalibration.pl.svg)
+
+### Ten dźwięk to głowica wytrącana z ustawienia.
+
+Note:
+Przywróć dźwięk z zimnego otwarcia. Zagraj go ponownie, krótko.
+
+Napęd nie ma czujnika ścieżki zerowej, więc po błędzie nie może wiedzieć,
+gdzie jest głowica. Kalibruje się jedynym dostępnym sposobem: wypycha głowicę
+na zewnątrz, aż uderzy w mechaniczny ogranicznik — i idzie dalej.
+
+MÓW „wielokrotnie" — NIE „40 razy". Ta liczba nie jest potwierdzona źródłem
+pierwotnym.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Szkody były prawdziwe
+
+*Compute!'s Gazette*, grudzień 1983 — jeden serwis działający w kilku stanach:
+
+> naprawił kilkaset napędów — element pozycjonowania głowicy
+> odpowiadał za usterkę we wszystkich przypadkach poza trzema
+
+Note:
+Szkody były prawdziwe. Compute's Gazette, grudzień 1983 — artykuł redakcyjny
+Roberta Locka, przeczytany u źródła.
+
+POTEM POWIEDZ ZASTRZEŻENIE NA GŁOS. Kosztuje dziesięć sekund i dzieli wykład,
+który da się sprawdzić, od takiego, którego nie da się.
+
+Potwierdzająca liczba jest wycięta (Dodatek A, pozycja 3). Jeśli ktoś
+z sali naciska, czy jeden sprzedawca to dość, jest w zanadrzu: cztery z
+siedmiu własnych napędów redakcji zawiodły tak samo — druga populacja,
+nie ta od sprzedawcy.
+
+POWIEDZ TO NA GŁOS NIEZALEŻNIE OD WSZYSTKIEGO: „To wspomnienie jednego
+sprzedawcy, zrelacjonowane przez redaktora. Bez metodologii, bez mianownika.
+To mocny sygnał — ale nie jest to zmierzony wskaźnik awaryjności."
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Oczywisty morał jest błędny
+
+### „Zaoszczędzili na czujniku."
+
+<br>
+
+## Nie.
+
+### 1541C **dostarczono z zamontowanym czujnikiem**
+
+### — a Commodore **wyłączyło go fabrycznie.**
+
+*Jest zworka, J3, żeby go z powrotem włączyć.*
+
+Note:
+ODWRÓCENIE — najlepszy zwrot w wykładzie. Oczywisty morał brzmi
+„zaoszczędzili na czujniku". To NIEPRAWDA.
+
+1541C dostarczono z czujnikiem fotoelektrycznym ZAMONTOWANYM — a Commodore
+wyłączyło go fabrycznie. Jest zworka, J3, żeby go z powrotem włączyć.
+	</script>
+</section>
+</section>
+
+<section>
+<section data-markdown>
+	<script type="text/template">
+# Akt 5
+
+## Wzorzec
+
+Note:
+=========================================================
+AKT 5 — WZORZEC — 5 min
+Buduj tabelę WIERSZ PO WIERSZU. Każdy wiersz ma być rozpoznaniem, a nie nową
+informacją — publiczność poznała już wszystkie cztery usterki.
+=========================================================
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Cztery usterki. Jeden wzorzec.
+
+| Usterka | Naprawiona w | W sprzedanych egzemplarzach |
+|---|---|---|
+| Magistrala szeregowa | C128 / 1571 Fast Serial | **nigdy** |
+| Czujnik ścieżki zerowej | fotoprzerywacz w 1571 | **nigdy** |
+| Niszczenie danych przez `SAVE@` | ROM-y 1571 Revision 4 | **nigdy** |
+| Element pozycjonowania głowicy | poprawiony na linii produkcyjnej | **serwis** |
+
+Note:
+Odsłaniaj wiersz po wierszu. Zrób pauzę po trzecim.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## I za każdym razem — wiedzieli
+
+- noty aplikacyjne do 6522 **istniały wewnątrz firmy**
+- czujnik był **zamontowany, a potem wyłączony**
+- Commodore jest w pełni świadome ustaleń dotyczących rozkalibrowującej się głowicy — i próbuje naprawić problem na etapie produkcji
+
+<br>
+
+### Poprawka zawsze trafiała do **następnej** maszyny.
+
+Note:
+I w każdym z tych przypadków Commodore WIEDZIAŁO. To slajd, który zamienia
+cztery anegdoty w tezę.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Ile to kosztowało Commodore
+
+*Compute!'s Gazette*, grudzień 1983:
+
+> gigantyczne ilości popsutych stacji 1541
+> straty rzędu setek tysięcy dolarów potencjalnej sprzedaży
+
+<br>
+
+### Dyscyplina kosztowa, która daje produkt, którego nie da się sprzedać,
+
+### **nie jest dyscypliną kosztową.**
+
+Note:
+Ile to naprawdę kosztowało. Nie tylko użytkowników — samo Commodore.
+Artykuł Locka jest o OGÓLNOKRAJOWYM BRAKU TOWARU.
+	</script>
+</section>
+</section>
+
+<section>
+<section class="lead" data-markdown>
+	<script type="text/template">
+# 170,75 KiB
+
+# < 1 KB/s
+
+### Commodore potrafiło zbudować części.
+
+### Nie potrafiło jednego: **złożyć z nich systemu**.
+
+Note:
+=========================================================
+ZAMKNIĘCIE — 1 min
+=========================================================
+Wróć do dwóch liczb. Postaw tezę wprost.
+	</script>
+</section>
+
+<section data-markdown>
+	<script type="text/template">
+## Jeszcze jedno
+
+Napęd był komputerem. **Społeczność potraktowała go jak komputer.**
+
+- fastloadery, które przebiły fabryczny cel projektowy
+- zabezpieczenia przed kopiowaniem działające na procesorze samego napędu
+- dema używające 1541 jako **koprocesora matematycznego**
+
+<br>
+
+### Otwartość, której Commodore nigdy nie zaprojektowało —
+
+### osiągnięta przypadkiem.
+
+### To dlatego wciąż o tym rozmawiamy.
+
+Note:
+Opcjonalna ostatnia nuta. Cieplejsza niż teza, i prawdziwa.
+
+Napęd był komputerem, a społeczność potraktowała go jak komputer:
+fastloadery, zabezpieczenia przed kopiowaniem, dema używające 1541 jako
+koprocesora matematycznego.
+
+Otwartość, której Commodore nigdy nie zaprojektowało — osiągnięta
+przypadkiem — jest powodem, dla którego wciąż o tym rozmawiamy.
+	</script>
+</section>
+
+<section class="lead" data-markdown>
+	<script type="text/template">
+# Pytania
+
+Note:
+Pytania i odpowiedzi. Prawdopodobne pytania i miejsca, gdzie leżą odpowiedzi:
+
+- „Czemu nie użyć po prostu portu równoległego?" — DolphinDOS tak zrobił;
+  wymaga kabla, ~23×. Transwarp osiągnął ~40× całkiem bez sprzętu (Akt 2.4).
+- „Czy 1541 był wolniejszy od konkurencji?" — tak; Apple II Disk II miał
+  ~15 KB/s. Warto zaznaczyć, że Disk II był projektem Wozniaka i słynął
+  z minimalnego sprzętu.
+- „Czy Commodore kiedykolwiek naprawiło sam C64?" — nie. Każda poprawka szła
+  do następcy. To jest Akt 5.
+- „Jak szybki był 1571?" — Fast Serial ~2,1 KB/s standardowo, szybciej
+  w trybie Burst. Wciąż poniżej tego, co fastloadery osiągały na 1541.
+- Cokolwiek o materiale o C128/Apple — łańcuchy cytowań biegną tam przez
+  źródła wtórne (obs-0017). Powiedz to wprost, zamiast zgadywać.
+	</script>
+</section>
+</section>
+			</div>
+		</div>
+
+		<script src="reveal.js"></script>
+		<script src="markdown.js"></script>
+		<script src="notes.js"></script>
+		<script>
+			// Config carried over from ../pixelove2026/index.html, which is the quality
+			// baseline this pipeline has to match — EXCEPT the canvas size. The baseline's
+			// 1200x700 fit its sparse slides; c64-1541 is denser, and 6 of its 53 slides
+			// overflowed that canvas (measured headlessly 2026-09-25, worst 138% of height
+			// on the Polish title card). 1600x900 is true 16:9 and gives every current
+			// slide headroom. Theme font sizes are in px, so a larger canvas makes ALL
+			// content — text and figures alike — proportionally smaller on screen; a
+			// font-size cut would have left the SVG figures overflowing.
+			Reveal.initialize({
+				hash: true,
+				width: 1600,
+				height: 900,
+				slideNumber: 'c/t',
+				autoPlayMedia: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

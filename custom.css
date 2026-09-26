@@ -33,8 +33,17 @@
 .reveal section .smaller {
     font-size: smaller;
 }
+/* Diverges from the pixelove2026/retrosfera7 copies (blueviolet): with the highlight
+ * plugin removed 2026-09-25, this colour paints WHOLE snippets, not just inline code,
+ * and blueviolet on #111 is barely legible. Author asked for light grey. */
 .reveal section code {
-    color: blueviolet;
+    color: #ccc;
+}
+/* The theme's 90%-width pre leaves short snippets hugging the left edge of a mostly
+ * empty box; sizing the box to its content re-centres the snippet itself. */
+.reveal section pre {
+    width: fit-content;
+    max-width: 90%;
 }
 .reveal section .subtitle {
     font-size: 2rem;
@@ -60,9 +69,9 @@
  * WHY THESE LIVE HERE rather than in a sixth stylesheet. src/template.html says, in the file
  * itself, "Do not append a stylesheet after custom.css", and build.js asserts BOTH halves of that
  * order by reading the emitted HTML back: custom.css must load after reveal.css and theme.css, and
- * nothing may follow it except the highlight plugin. A new <link> would mean editing the template
- * and both invariants. These rules want to win over the theme for the same reason the rest of this
- * file does, so this is where they belong.
+ * nothing may follow it at all (the highlight plugin, the one former exception, was removed
+ * 2026-09-25). A new <link> would mean editing the template and both invariants. These rules want
+ * to win over the theme for the same reason the rest of this file does, so this is where they belong.
  *
  * Everything above is a DESCENDANT helper (.reveal section .pink) styling spans inside a slide.
  * These are the first SECTION-LEVEL rules in this file — they style the slide itself.
@@ -107,6 +116,12 @@
 .reveal section .layout-two-column > .col {
     flex: 1 1 0;
     min-width: 0;
+}
+
+.reveal section .layout-two-column > .col img {
+    max-width: 100%;
+    max-height: 620px;
+    height: auto;
 }
 
 .reveal section .layout-text-image {

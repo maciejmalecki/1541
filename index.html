@@ -22,10 +22,11 @@
 		<link rel="stylesheet" href="theme.css">
 		<link rel="stylesheet" href="custom.css">
 
-		<!-- Code syntax highlighting. Before custom.css would be wrong; it is a plugin
-		     stylesheet and the example deck loads it after custom.css too
-		     (../pixelove2026/index.html:15). Kept here for that reason. -->
-		<link rel="stylesheet" href="monokai.css">
+		<!-- No syntax highlighting, DELIBERATELY (author decision, 2026-09-25): code
+		     snippets render monochrome in the theme's code font. The highlight plugin,
+		     its monokai.css and its script are removed rather than disabled, so nothing
+		     ships that isn't used. The example deck (../pixelove2026/index.html:15) does
+		     load the plugin; this pipeline diverges from the baseline on purpose here. -->
 	</head>
 
 	<body>
@@ -48,7 +49,7 @@
 					confirmed this empirically against 61 real breaks.
 				-->
 				<section>
-<section data-markdown>
+<section data-background-image="img/title-1541-drive.jpg" data-background-size="cover" data-background-opacity="0.4" data-markdown>
 	<script type="text/template">
 # The Drive That Fought Its Own Computer
 
@@ -175,6 +176,14 @@ a different data structure.
 	<script type="text/template">
 ## What random access buys you
 
+<div class="layout-two-column">
+<div class="col col-left">
+
+![The 1541's drive mechanism, photographed: the head assembly on its rails above the spindle motor](img/1541-mechanism.jpg)
+
+</div>
+<div class="col col-right">
+
 - a **directory** you can read without scanning the volume
 - a **block allocation map**
 - files updated **in place**
@@ -184,6 +193,9 @@ a different data structure.
 ### → a filesystem worth writing
 
 ### → **an operating system worth putting in a drive**
+
+</div>
+</div>
 
 Note:
 Spell out the consequence, because Act 3 depends on it. Everything the 1541
@@ -219,11 +231,22 @@ has nothing to destroy.
 	<script type="text/template">
 ## Inside a 1541
 
+<div class="layout-two-column">
+<div class="col col-left">
+
+![The 1541's main board, photographed: the drive's own computer on a single PCB](img/1541-mainboard.jpg)
+
+</div>
+<div class="col col-right">
+
 ![Inside a 1541: a 6502 at 1 MHz, 2 KiB SRAM, 16 KiB ROM with CBM DOS 2.6, and two 6522 VIA chips](img/inside-a-1541.svg)
 
 ### This is not a peripheral.
 
 ### It has about as much CPU as the machine commanding it.
+
+</div>
+</div>
 
 Note:
 Open the box. Say the line: this is not a peripheral. It has about as much CPU
@@ -516,28 +539,27 @@ now be primed to ask.
 	<script type="text/template">
 ## What the shipped protocol left on the table
 
-**Agreement instead of handshaking**
-
-Both CPUs run ~1 MHz → **cycle-match** instead of acknowledging every bit.
-
-> *"14 clock cycles delay for PAL and 15 for NTSC"*
-
-PAL vs NTSC = **one instruction** on the C64 side. Drive code: unchanged.
-
-<br>
-
-*Getting the code in: the drive's own DOS uploads it over the slow protocol
-and runs it on the drive's 6502. Nothing rewired.*
+![Two phases over one serial cable: first the C64 uploads the loader over the slow stock protocol into the 1541, where it runs on the drive's own 6502; then file data streams back cycle-matched, with no handshaking. Same wire, nothing rewired.](img/fastloader-two-phase.svg)
 
 Note:
 CUT DOWN (C1). This was a four-item list; Appendix A's "§2.4 items 1 and 4"
-(the second wire, and M-W/M-E) are gone. Item 4's MECHANISM is retained as the
-closing line below, because without it the audience is told software beat the
-bus by 40x and never told how the code got into the drive.
+(the second wire, and M-W/M-E) are gone. Item 4's MECHANISM is retained,
+because without it the audience is told software beat the bus by 40x and
+never told how the code got into the drive.
 
-Cycle-matching is the one to dwell on — it is what replaced handshaking, and
-it is why the drive code needed no PAL/NTSC change. The upload line is a
-throwaway: say it and move on.
+REDRAWN 2026-09-25: the prose body became the two-phase figure
+(img/fastloader-two-phase.svg). The audience now READS the mechanism; the
+numbers moved here, to be SAID over the figure:
+
+SAY, over phase 1: "Getting the code in is the boring part — the drive's own
+DOS uploads the loader over the slow protocol and runs it on the drive's
+6502. Nothing rewired."
+
+SAY, over phase 2 — cycle-matching is the one to dwell on, it is what
+replaced handshaking: "Both CPUs run at about one megahertz, so the two
+sides AGREE on timing instead of acknowledging every bit —
+'14 clock cycles delay for PAL and 15 for NTSC'. PAL versus NTSC is one
+instruction on the C64 side. The drive code doesn't change at all."
 
 Badline dodging, the remaining item, is the NEXT slide and is protected.
 	</script>
@@ -625,7 +647,7 @@ clock rate was known exactly.
 
 <br>
 
-![Timeline of transfer speeds, 1980 to 1986: design intent above 10 KB/s, the VIC-20 and C64 shipping at about 2 and under 1 KB/s, community fastloaders reaching about 16 KB/s in 1984, and Commodore's own fix arriving at about 2.1 KB/s in 1986.](img/five-years.svg)
+![Transfer speeds on one scale: design intent above 10 KB/s in 1980, the VIC-20 and C64 shipping at no more than about 0.5 and about 0.4 KB/s, community fastloaders reaching about 5 to 6 KB/s in 1984, Commodore's own fix arriving at 4 to 5 KB/s in 1986, and Transwarp setting the 19 KB/s record — about fifty times stock — on the same wire in 2020.](img/five-years.svg)
 
 ### Five years. Three machine generations.
 
@@ -633,6 +655,15 @@ Note:
 Close Act 2. Commodore's own fix, Fast Serial, arrived in 1986 with the
 C128/1571 — five years and three machine generations to ship the bus as
 designed, while third parties had already beaten it from userland.
+
+DATA CORRECTED 2026-09-25 (author): mid-80s fastloaders sit around
+5–6 KB/s, not ~16; C128 Fast Serial does 4–5 KB/s, not ~2.1; the ~50×
+record — 19 KB/s — is Transwarp, 2020, still on the same wire. So the
+1984 community figure beats Commodore's 1986 fix two years before that
+fix ships, and the record row shows what the wire could always do.
+Also corrected the same day: the VIC-20/1540 is perhaps no more than
+~0.5 KB/s (was ~2), and the C64/1541 is ~0.4 KB/s — the stock-rate
+slide's 403 bytes/sec (was "< 1 KB/s").
 
 First statement of the through-line.
 	</script>
@@ -817,19 +848,6 @@ read in full.
 	</script>
 </section>
 
-<section data-markdown>
-	<script type="text/template">
-## How a ghost corrupts your disk
-
-![Buffer 2 of five is allocated to a drive that does not exist and cannot be stolen, so save-with-replace finds only four buffers, steals the BAM instead, and only two track images fit.](img/ghost-corruption.svg)
-
-Note:
-Walk the mechanism. Five buffers; save-with-replace needs all five; the phantom
-holds one hostage because buffers with drive errors cannot be stolen; so DOS
-steals the BAM instead; the two-track BAM-image limit does the rest.
-	</script>
-</section>
-
 <section class="lead" data-markdown>
 	<script type="text/template">
 ## A vestigial structure that corrupts real data
@@ -933,49 +951,6 @@ money on a sensor". That is WRONG.
 
 The 1541C shipped the photo-sensor FITTED — and Commodore disabled it at the
 factory. There is a jumper, J3, to turn it back on.
-	</script>
-</section>
-
-<section data-markdown>
-	<script type="text/template">
-## Because the banging was doing a job
-
-> a *"feature… installed by Commodore to eliminate a common
-> problem with all 1541 drives… the drive getting **'lost'**
-> past the directory track"*
-
-> otherwise the drive *"might look defective to the user since
-> turning it off and back on again does not restore normal
-> operation"*
-
-Note:
-Why? Because the head-banging was DOING A JOB. Service documentation records it
-as a deliberate feature.
-
-Without it, a lost head produced a drive that could not be recovered by power-
-cycling — so it looked broken to the user.
-	</script>
-</section>
-
-<section data-markdown>
-	<script type="text/template">
-## A trade, not an oversight
-
-```
-   ACCEPT:   cumulative alignment damage
-   TO GET:   a drive that always recovers to a known state
-```
-
-<br>
-
-### And on the 1541C the pressure was **compatibility** —
-
-### not cost.
-
-Note:
-So it is a trade, not an oversight. And note what the pressure was on the 1541C:
-COMPATIBILITY, not cost. That connects to the installed-base thread rather than
-the cost-cutting one.
 	</script>
 </section>
 </section>
@@ -1129,20 +1104,25 @@ Q&A. Likely questions and where the answers live:
 
 		<script src="reveal.js"></script>
 		<script src="markdown.js"></script>
-		<script src="highlight.js"></script>
 		<script src="notes.js"></script>
 		<script>
 			// Config carried over from ../pixelove2026/index.html, which is the quality
-			// baseline this pipeline has to match.
+			// baseline this pipeline has to match — EXCEPT the canvas size. The baseline's
+			// 1200x700 fit its sparse slides; c64-1541 is denser, and 6 of its 53 slides
+			// overflowed that canvas (measured headlessly 2026-09-25, worst 138% of height
+			// on the Polish title card). 1600x900 is true 16:9 and gives every current
+			// slide headroom. Theme font sizes are in px, so a larger canvas makes ALL
+			// content — text and figures alike — proportionally smaller on screen; a
+			// font-size cut would have left the SVG figures overflowing.
 			Reveal.initialize({
 				hash: true,
-				width: 1200,
-				height: 700,
+				width: 1600,
+				height: 900,
 				slideNumber: 'c/t',
 				autoPlayMedia: true,
 
 				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+				plugins: [ RevealMarkdown, RevealNotes ]
 			});
 		</script>
 	</body>
