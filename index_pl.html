@@ -308,13 +308,11 @@ ograniczenie przetrwało NA STYKU sklejonych grup, a nie tylko wewnątrz nich.
 
 <section data-markdown>
 	<script type="text/template">
-## Kodowanie tworzy własną interpunkcję
+## Kodowanie tworzy interpunkcję
 
 Zakodowane dane **nigdy** nie mogą zawierać długiego ciągu jedynek.
 
 ![Strumień zakodowanych bitów, w którym ciąg dziesięciu jedynek odcina się akcentem: niemożliwy w zakodowanych danych, więc służy jako znacznik synchronizacji sektora](img/sync-mark.pl.svg)
-
-### Ograniczenie nie tylko chroni dane — ono je rozgranicza.
 
 Note:
 Elegancka konsekwencja. Zatrzymaj się tu — to najładniejszy pomysł w Akcie 1.
@@ -370,8 +368,6 @@ Założenie projektowe, 1980:
 ## ~4 µs/bit · **> 10 KB/s**
 
 ### sprzętowy rejestr przesuwny
-
-### **Nikt nie projektował tej stacji jako wolnej.**
 
 Note:
 Ustal fakt, na którym stoi cały akt: magistralę zaprojektowano jako SZYBKĄ.
@@ -461,8 +457,6 @@ drzwi.
 
 1541 to lekko poprawiony 1540.
 
-**Przeróbka napędu kosztowała.**
-
 Note:
 Drzwi 1. Protokół z przesuwaniem sprzętowym potrzebuje działającego krzemu
 po OBU stronach. 1541 to lekko poprawiony 1540 i został przy 6522.
@@ -474,10 +468,6 @@ po OBU stronach. 1541 to lekko poprawiony 1540 i został przy 6522.
 ## 2. Linie sygnałowe prowadzą do niewłaściwego złącza
 
 ![Nóżki SP i CNT układu CIA 6526 prowadzą do nieużywanego portu użytkownika; przewód w stronę złącza IEC jest przerwany i przekreślony, bo nigdy go nie poprowadzono.](img/pins-wrong-connector.pl.svg)
-
-Nie o łatkę w ROM-ie chodziło — trzeba było **przerobić płytę**.
-
-*Dopiero C128 zawiera odpowiednio poprawione połączenia.*
 
 Note:
 Drzwi 2. Najlepszy fakt w tym akcie. Nóżki z poprawką fizycznie prowadzą do
@@ -491,13 +481,9 @@ płyty. C128 zrobił dokładnie to, wykorzystując bezczynną dotąd linię SRQ.
 
 <section data-markdown>
 	<script type="text/template">
-## 3. VIC-II to sabotował
+## 3. Układ graficzny - sabotażysta
 
 ![Oś czasu procesora, na której DMA badline wstrzymuje procesor na około 40 mikrosekund co mniej więcej 500, łamiąc programowe 20-mikrosekundowe taktowanie bitów.](img/badline-timeline.pl.svg)
-
-Odpowiedź Commodore: rozluźnić protokół **asymetrycznie**.
-
-Urządzenie → komputer: **~60 µs/bit**. Poniżej 1 KB/s.
 
 Note:
 Drzwi 3. VIC-II. DMA badline wstrzymuje procesor na ~40 µs co ~500 µs,
@@ -529,11 +515,11 @@ Puenta 2.3. Podaj ją płasko, bez ozdobników.
 
 <br>
 
-### Skoro powolność bierze się z usterki układu i z układu graficznego
+Skoro powolność bierze się z usterki układu i z układu graficznego
 
-### podkradającego cykle...
+podkradającego cykle...
 
-### ...to w jaki sposób udało się naprawić ten problem bez modyfikacji sprzętowej?
+...to w jaki sposób udało się naprawić ten problem bez modyfikacji sprzętowej w fastloaderach?
 
 Note:
 =========================================================
@@ -546,8 +532,6 @@ publiczność powinna być już gotowa zadać.
 
 <section data-markdown>
 	<script type="text/template">
-## IEC: Zmarnowana szansa
-
 ![Dwie fazy na jednym kablu szeregowym: najpierw C64 wgrywa loader wolnym, fabrycznym protokołem do 1541, gdzie działa on na procesorze 6502 napędu; potem dane pliku płyną z powrotem z dopasowaniem cykli, bez uzgadniania. Ten sam przewód, żadnych przeróbek.](img/fastloader-two-phase.pl.svg)
 
 Note:
@@ -577,13 +561,9 @@ Omijanie badline, czyli pozostały punkt, to NASTĘPNY slajd i jest chroniony.
 
 <section data-markdown>
 	<script type="text/template">
-## Omijaj badline — nie dostosowuj się do niego
+## Omijaj badline
 
 ![Wiersz Commodore to jeden trwale spowolniony słupek, a wiersz fastloadera przesyła szerokimi seriami pomiędzy wąskimi, okresowymi przerwami badline, co czyni zakłócenie dającym się zaplanować.](img/dodge-the-badline.pl.svg)
-
-### Commodore poniosło **trwały, globalny koszt**,
-
-### by uniknąć problemu **usuwalnego lokalnie**.
 
 Note:
 NAJOSTRZEJSZY PUNKT WYKŁADU. Nigdy go nie tnij. (Dodatek A chroni go jako
@@ -658,8 +638,6 @@ zegara jedynego peryferium była znana dokładnie.
 <br>
 
 ![Prędkości transferu na jednej skali: założenia projektowe powyżej 10 KB/s w 1980, VIC-20 i C64 dostarczone przy najwyżej około 0,5 i około 0,4 KB/s, fastloadery społeczności około 5–6 KB/s w 1984, własna poprawka Commodore przy 4–5 KB/s w 1986 oraz Transwarp z rekordem 19 KB/s — około pięćdziesiąt razy szybciej niż fabrycznie — na tym samym przewodzie w 2020.](img/five-years.pl.svg)
-
-### Pięć lat. Trzy pokolenia maszyn.
 
 Note:
 Zamknij Akt 2. Własna poprawka Commodore, Fast Serial, przyszła w 1986 roku
@@ -851,11 +829,9 @@ z 1986 roku pokazuje dlaczego, w kategoriach samego DOS-u.
 
 <section class="lead" data-markdown>
 	<script type="text/template">
-## Szczątkowa struktura, która niszczy prawdziwe dane,
+## Decyzja o "tanim" użyciu istniejącego DOSs
 
-## nie jest pozostałością.
-
-## Jest **niezapłaconym kosztem migracji**.
+## skutkowała utratą danych tysiąców użytkowników
 
 Note:
 Domknij Akt 3. Potem uwaga o ścisłości — powiedz ją na głos, kosztuje pięć
@@ -945,13 +921,9 @@ To mocny sygnał — ale nie jest to zmierzony wskaźnik awaryjności."
 
 <br>
 
-## Nie.
-
 ### 1541C **dostarczono z zamontowanym czujnikiem**
 
 ### — a Commodore **wyłączyło go fabrycznie.**
-
-*Jest zworka, J3, żeby go z powrotem włączyć.*
 
 Note:
 ODWRÓCENIE — najlepszy zwrot w wykładzie. Oczywisty morał brzmi
@@ -983,12 +955,12 @@ informacją — publiczność poznała już wszystkie cztery usterki.
 	<script type="text/template">
 ## Cztery usterki. Jeden wzorzec.
 
-| Usterka | Naprawiona w | W sprzedanych egzemplarzach |
-|---|---|---|
-| Magistrala szeregowa | C128 / 1571 Fast Serial | **nigdy** |
-| Czujnik ścieżki zerowej | fotoprzerywacz w 1571 | **nigdy** |
-| Niszczenie danych przez `SAVE@` | ROM-y 1571 Revision 4 | **nigdy** |
-| Element pozycjonowania głowicy | poprawiony na linii produkcyjnej | **serwis** |
+| Usterka | Naprawiona w | 
+|---|---|
+| Magistrala szeregowa | C128 / 1571 Fast Serial |
+| Czujnik ścieżki zerowej | fotokomórka w 1571 | 
+| Niszczenie danych przez `SAVE@` | ROM-y 1571 Revision 4 |
+| Element pozycjonowania głowicy | poprawiony na linii produkcyjnej |
 
 Note:
 Odsłaniaj wiersz po wierszu. Zrób pauzę po trzecim.
@@ -1005,7 +977,7 @@ Odsłaniaj wiersz po wierszu. Zrób pauzę po trzecim.
 
 <br>
 
-### Poprawka zawsze trafiała do **następnej** maszyny.
+### Poprawka trafiała dopiero do **następnej** maszyny.
 
 Note:
 I w każdym z tych przypadków Commodore WIEDZIAŁO. To slajd, który zamienia
